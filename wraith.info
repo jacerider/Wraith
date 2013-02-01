@@ -1,0 +1,61 @@
+; Theme Info --------------------------------------------------------------
+; required information about the theme
+
+name = Wraith
+description = Wraith is a base theme for advanced drupal theming.
+screenshot = assets/images/wraith.png
+core = 7.x
+
+
+; Stylesheets  ------------------------------------------------------------
+; Nothing here, stylesheets are loaded conditionally via preprocess.inc
+
+
+; Scripts  ----------------------------------------------------------------
+scripts[] = assets/scripts/wraith.js
+
+
+; Regions -----------------------------------------------------------------
+; these content regions are available for block placement.
+; some are special hidden regions: page_top, page_bottom, and help.
+
+; these are the stock regions
+regions[header] = Header
+regions[help] = Help
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+
+regions[toolbar] = Toolbar
+regions[featured] = Featured
+regions[highlighted] = Highlighted
+regions[content_top] = Content top
+regions[content] = Content
+regions[content_bottom] = Content bottom
+
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+
+regions[footer] = Footer
+
+
+; Theme Settings ----------------------------------------------------------
+; these are the defaults for the theme settings configuration.
+; sub-themes must re-declare default settings.
+
+settings[wraith_sass] = 1
+
+settings[wraith_bootstrap] = 1
+
+settings[wraith_bootstrap_scss][] = '_variables'
+settings[wraith_bootstrap_scss][] = '_mixins'
+settings[wraith_bootstrap_scss][] = '_reset'
+settings[wraith_bootstrap_scss][] = '_scaffolding'
+settings[wraith_bootstrap_scss][] = '_grid'
+settings[wraith_bootstrap_scss][] = '_layouts'
+
+settings[wraith_enable_css] = 1
+settings[wraith_enable_css_modules][] = 'devel'
+settings[wraith_enable_css_modules][] = 'toolbar'
+settings[wraith_enable_css_files][] = 'modules/system/system.base.css'
+
+settings[wraith_js_footer] = 1

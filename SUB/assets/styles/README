@@ -1,0 +1,7 @@
+##### Wraith - advanced drupal theming. #####
+
+This is the directory for all your static (CSS) stylesheets,
+If you want compiled files to be written here you should set the path to your
+theme directory (e.g. sites/all/themes) in your theme settings form in the
+"Sass settings" section under "Path to store compiled files".
+By default, compiled files are written to the public files directory.
