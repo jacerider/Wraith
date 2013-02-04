@@ -3,7 +3,7 @@
 /**
  * Implements hook_js_alter().
  *
- * This function checks all CSS files currently added via drupal_add_js() and
+ * This function checks all JS files currently added via drupal_add_js() and
  * checks to see if any of them are disabled via theme settings.
  */
 function wraith_js_alter(&$js) {
@@ -47,6 +47,11 @@ function wraith_js_alter(&$js) {
         $item['scope'] = 'footer';
       }
     }
+  }
+
+  if(theme_get_setting('wraith_aggregate_js')){
+    require_once drupal_get_path('theme', 'wraith') . '/includes/js.inc';
+    wraith_aggregate_js($js);
   }
 }
 
@@ -152,6 +157,10 @@ function wraith_css_alter(&$css) {
       }
     }
   }
+
+  if (theme_get_setting('wraith_sass')) {
+    wraith_sass_alter($css);
+  }
 }
 
 /**
@@ -235,6 +244,7 @@ function wraith_bootstrap_include(){
   $path = drupal_get_path('theme', 'wraith').'/assets/bootstrap/stylesheets/bootstrap';
   $options = array(
     'every_page' => TRUE,
+    'weight' => -1000
   );
   if(is_array($scss)){
     foreach($scss as $s){
@@ -342,7 +352,7 @@ function wraith_get_assets_list($type = 'css', $filter = array(), $exclude = arr
     $filter = array_combine($filter, $filter);
     $modules = array_intersect_key($enabled_modules, $filter);
   }
-  elseif ($filter == 'jquery') {
+  elseif ($filter == 'jquery' && isset($modules['jquery'])) {
     $modules['jquery']->filename = 'misc/jquery.js';
   }
   elseif ($filter == 'wraith') {

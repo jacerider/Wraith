@@ -18,8 +18,8 @@ use Assetic\Filter\CompassFilter;
 function wraith_element_info_alter(&$type) {
 
   // Add wraith_pre_render() to be invoked by drupal_render().
-  array_unshift($type['styles']['#pre_render'], 'wraith_pre_render');
-  
+  //array_unshift($type['styles']['#pre_render'], 'wraith_pre_render');
+
   // Show recompilation message once an hour.
   if (theme_get_setting('wraith_sass_recompile') && user_access('administer site configuration') && flood_is_allowed('wraith_sass_recompile_warning', 1)) {
     flood_register_event('wraith_sass_recompile_warning');
@@ -54,33 +54,32 @@ function wraith_sass_global_info($files = array()){
  * Added by wraith_element_info_alter() to be invoked by drupal_render().
  *
  * @param $elements
- *   A render array containing:
- *   '#items': The CSS items as returned by drupal_add_css() and altered by
- *   drupal_get_css().
- *   '#group_callback': A function to call to group #items to enable the use of
- *   fewer tags by aggregating files and/or using multiple @import statements
- *   within a single tag.
- *   '#aggregate_callback': A function to call to aggregate the items within the
- *   groups arranged by the #group_callback function.
+ * A render array containing:
+ * '#items': The CSS items as returned by drupal_add_css() and altered by
+ * drupal_get_css().
+ * '#group_callback': A function to call to group #items to enable the use of
+ * fewer tags by aggregating files and/or using multiple @import statements
+ * within a single tag.
+ * '#aggregate_callback': A function to call to aggregate the items within the
+ * groups arranged by the #group_callback function.
  * @param $clean
- *   Force a rebuild if TRUE
+ * Force a rebuild if TRUE
  *
  * @return $elements
- *   The modified (pre-rendered) $elements parameter.
+ * The modified (pre-rendered) $elements parameter.
  */
-
-function wraith_pre_render($elements) {
+function wraith_sass_alter(&$css) {
   global $theme_key;
-  
-  $files = wraith_pick_files($elements['#items']);
-  
+  $files = wraith_pick_files($css);
+  uasort($files, 'drupal_sort_weight');
+
   // We can bail out here if there are no Sass files anyways.
   if (empty($files)) {
     // Remove the files from the array of stylesheets.
-    $elements['#items'] = array_diff_key($elements['#items'], $files);
+    $css = array_diff_key($css, $files);
     return $elements;
   }
-  
+
   $data = array();
 
   // Get data required for compiled sass name
@@ -88,21 +87,24 @@ function wraith_pre_render($elements) {
   unset($info['files']);
   extract($info);
 
+  // Get cached data
+  $cached = cache_get($cid, 'cache_page');
+
   // Initial checks to see if we should compile
   // - Does the compiled file exist?
   // - Do we have cached data of this file?
   // - Have we force set any file to be recompiled?
   $compile = !file_exists($path) || empty($cached->data) ? TRUE : FALSE;
-  // If create is still set to false, lets check to see if any of the files 
+  // If create is still set to false, lets check to see if any of the files
   // have been updated since our last compile
   if(!$compile){
     foreach ($files as $key => $file) {
-      if (file_exists($elements['#items'][$key]['data'])) {
+      if (file_exists($css[$key]['data'])) {
         if($file['recompile'] || (filemtime($path) < filemtime($file['data']))){
           $compile = TRUE;
         }
       }else{
-        unset($elements['#items'][$key]);
+        unset($css[$key]);
       }
     }
   }
@@ -110,15 +112,15 @@ function wraith_pre_render($elements) {
   // Loop through each file again and remove from $elements array
   // and read if we are compiling
   foreach ($files as $key => $file) {
-    if (file_exists($elements['#items'][$key]['data'])) {
+    if (file_exists($css[$key]['data'])) {
       // We recompile this file if the file doesn't exist, if recompile equals true,
       // if cache was cleared or if the file have changed since it was last compiled.
       if ($compile){
         // Read the file.
-        $data[] = wraith_load_stylesheet($file['data']);
+        $data[$key] = wraith_load_stylesheet($file['data']);
       }
-      // Remove this element as it will be combined intoa  single element below
-      unset($elements['#items'][$key]);
+      // Remove this element as it will be combined intoa single element below
+      unset($css[$key]);
     }
   }
 
@@ -128,21 +130,19 @@ function wraith_pre_render($elements) {
   $file['wraith_alter'] = TRUE;
 
   // Update the item in the stylesheets array.
-  $elements['#items'][$path] = $file;
-  $elements['#items'][$path]['data'] = $path;
-  
+  $css[$path] = $file;
+  $css[$path]['data'] = $path;
+
   if(!empty($data)){
     // Compile.
     wraith_parse($data, $file, $file['syntax'], $file['theme']);
     cache_set($cid, time(), 'cache_page', CACHE_TEMPORARY);
   }
-  
+
   // Reset "compile_for_production" when finished compiling.
   if (!empty($_SESSION['wraith_compile_for_production'])) {
     $_SESSION['wraith_compile_for_production'] = FALSE;
   }
-  
-  return $elements;
 }
 
 /**
@@ -198,7 +198,7 @@ function wraith_load_stylesheet($file) {
     $base = substr($base, strlen($GLOBALS['base_root']));
   }
   _drupal_build_css_path(NULL, $base . '/');
-  
+
   if (theme_get_setting('wraith_url_rewrite')) {
     // Anchor all paths in the CSS with its base URL, ignoring external, absolute
     // paths, and compass url helper functions.
@@ -229,7 +229,7 @@ function wraith_parse($data, $file, $syntax, $theme_name) {
   $fonts_path = theme_get_setting('wraith_fonts_path') ? theme_get_setting('wraith_fonts_path') : drupal_get_path('theme', $theme_name) . '/assets/fonts';
   $stylesheets_path = drupal_get_path('theme', $theme_name) . '/stylesheets';
   $files_directory = variable_get('file_' . file_default_scheme() . '_path', conf_path() . '/files') . '/wraith/' . $theme_name;
-  
+
   // Watch the theme dynasty for partials
   $dynasty = wraith_theme_dynasty();
   $load_paths = array();
@@ -253,7 +253,7 @@ function wraith_parse($data, $file, $syntax, $theme_name) {
     'fonts_path'=> DRUPAL_ROOT . '/' . $fonts_path,
     'css_path'=> DRUPAL_ROOT . '/' . $stylesheets_path,
   );
-  
+
   // Alter SASS just before it is sent to the parser
   // @see hook_wraith_alter().
   if (!empty($file['wraith_alter'])) {
@@ -282,7 +282,7 @@ function wraith_parse_compass($data, $file, $options) {
   $sass_filepath = $directory . 'tmp.' . basename($file['data']);
   $css_filepath = $directory . str_replace($options['syntax'], 'css', basename($file['data']));
   $syntax = $options['syntax'] == 'scss' ? true : false;
-  
+
   // Put $data in a file that Compass can compile.
   if (!file_prepare_directory($directory, FILE_CREATE_DIRECTORY)) {
     drupal_set_message(t('The directory !directory could not be created or is not writable. Please consult your !watchdog for a detailed error description.', array('!directory' => $directory, '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');

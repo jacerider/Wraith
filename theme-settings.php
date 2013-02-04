@@ -9,8 +9,8 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
   drupal_add_css(drupal_get_path('theme', 'wraith') .'/assets/styles/theme-settings.css');
   drupal_add_js(drupal_get_path('theme', 'wraith') .'/assets/scripts/themeSettings.js');
 
-  $select_toggle = '<br>' . 
-  l(t('select all'), '#', array('attributes' => array('class' => 'select-all'))) . ' | ' . 
+  $select_toggle = '<br>' .
+  l(t('select all'), '#', array('attributes' => array('class' => 'select-all'))) . ' | ' .
   l(t('select none'), '#', array('attributes' => array('class' => 'select-none')));
 
   $form['wraith_settings'] = array(
@@ -315,6 +315,16 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#description' => t('Yahoo! Exceptional Performance team recommends <a href="http://developer.yahoo.com/performance/rules.html#js_bottom">placing scripts at the bottom of your page</a> because of the way browsers download components.') . '<br>' .
       t('This will move all your scripts to the bottom of your page. You can still force a script to go in the <code>head</code> by setting <code>"force_header" => TRUE</code> in your !drupal_add_js options array.', array('!drupal_add_js' => l('drupal_add_js', 'http://api.drupal.org/api/drupal/includes%21common.inc/function/drupal_add_js', array('attributes' => array('target'=>'_blank'))))),
     '#default_value' => theme_get_setting('wraith_js_footer'),
+  );
+  // Aggregate JS
+  $form['wraith_settings']['wraith_js']['wraith_aggregatejs'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Aggregate JS files'),
+  );
+  $form['wraith_settings']['wraith_js']['wraith_aggregatejs']['wraith_aggregate_js'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("Aggregate all global js files into one minified and compressed file."),
+    '#default_value' => theme_get_setting('wraith_aggregate_js'),
   );
   // Disable JS
   $form['wraith_settings']['wraith_js']['wraith_disablejs'] = array(
