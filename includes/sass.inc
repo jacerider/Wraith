@@ -77,7 +77,7 @@ function wraith_sass_alter(&$css) {
   if (empty($files)) {
     // Remove the files from the array of stylesheets.
     $css = array_diff_key($css, $files);
-    return $elements;
+    return $css;
   }
 
   $data = array();
