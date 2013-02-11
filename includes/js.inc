@@ -11,18 +11,24 @@ use Assetic\Filter\PackerFilter;
 function wraith_aggregate_js(&$js){
   $files = &drupal_static(__FUNCTION__);
   if (!isset($files)) {
-    $files = array('header'=>array(),'footer'=>array(),'other'=>array());
-    foreach ($js as $filepath => &$item) {
-      if($item['type'] == 'file' && !empty($item['every_page']) && empty($item['wraith_aggregate'])){
-        $scope = $item['scope'] == 'header' || $item['scope'] == 'footer' ? $item['scope'] : 'other';
-        $files[$scope][$filepath] = $item;
-        unset($js[$filepath]);
-      }
+    $files = theme_get_setting('wraith_aggregate_js_files');
+
+    if(empty($files)){
+      $files = $js;
+      return;
     }
 
-    // Keep render order
-    $files = $files['header'] + $files['other'] + $files['footer'];
-    uasort($files, 'drupal_sort_weight');
+    // We want to remove all files set to be included globally
+    $files = drupal_map_assoc($files);
+
+    // Get new paths for any of our files
+    // This takes any files altered by jquery_update module or this theme
+    foreach($files as $file){
+      if(isset($js[$file])) $files[$file] = $js[$file]['data'];
+    }
+
+    unset($files[0]);
+    $js = array_diff_key($js, $files);
 
     $info = wraith_aggregate_js_info($files);
     extract($info);
@@ -40,47 +46,37 @@ function wraith_aggregate_js(&$js){
     // have been updated since our last compile
     if(!$compile){
       foreach ($files as $key => $file) {
-        if (file_exists($file['data'])) {
-          if($filetime < filemtime($file['data'])){
+        if (file_exists($file)) {
+          if($filetime < filemtime($file)){
             $compile = TRUE;
           }
         }
       }
     }
 
-    // Loop through each file again and remove from $elements array
-    // and read if we are compiling
-    foreach ($files as $key => $file) {
-      if (file_exists($file['data'])) {
-        // We recompile this file if the file doesn't exist, if recompile equals true,
-        // if cache was cleared or if the file have changed since it was last compiled.
-        if ($compile){
-          // Read the file.
-          $data[] = $key;
-        }
-      }
-    }
+    $js[$path] = $file = array(
+      'type' => 'file',
+      'group' => JS_LIBRARY,
+      'every_page' => TRUE,
+      'weight' => -1000,
+      'scope' => 'header',
+      'cache' => TRUE,
+      'defer' => FALSE,
+      'preprocess' => FALSE,
+      'version' => $filetime,
+      'data' => $path
+    );
 
-    $file['scope'] = 'header';
-    $file['data'] = $path;
-    $file['version'] = $filetime;
-    $file['weight'] = $file['group'] = -1000;
-    $js[$path] = $file;
-    drupal_add_js($path, array('every_page' => TRUE, 'wraith_aggregate' => TRUE));
-
-    if(!empty($data)){
-      // Compile.
-      dsm('Compiled');
-      $file['directory'] = $directory;
-      wraith_aggregate($data, $file);
+    if($compile){
+      wraith_aggregate($files, $path, $directory);
       cache_set($cid, time(), 'cache_page', CACHE_TEMPORARY);
     }
 
     $files = $js;
   }else{
+    $files['settings'] = $js['settings'];
     $js = $files;
   }
-
 }
 
 /**
@@ -116,9 +112,7 @@ function wraith_aggregate_js_info(&$js = array()){
  * @return
  *   The transformed CSS as a string.
  */
-function wraith_aggregate($data, $file) {
-  $js_filepath = $file['data'];
-  $directory = $file['directory'];
+function wraith_aggregate($files, $filepath, $directory) {
 
   // Put $data in a file that Compass can compile.
   if (!file_prepare_directory($directory, FILE_CREATE_DIRECTORY)) {
@@ -127,14 +121,9 @@ function wraith_aggregate($data, $file) {
 
   // Let assetic compile it
   require_once drupal_get_path('theme','wraith').'/includes/packer/class.JavaScriptPacker.php';
-  // $asset = new FileAsset($js_filepath,
-  //   array(
-  //     $packer = new PackerFilter(),
-  //   )
-  // );
 
   $collection = array();
-  foreach($data as $path){
+  foreach($files as $path){
     $collection[] = new FileAsset(DRUPAL_ROOT . '/' . $path);
   }
 
@@ -143,18 +132,17 @@ function wraith_aggregate($data, $file) {
   ));
 
   try {
-
-    $asset->load();
+    //$asset->load();
     $data = $asset->dump();
     // If no exceptions were thrown, try saving the result to a JS file.
     //$data = gzencode($data, 9, FORCE_GZIP);
-    if (!file_unmanaged_save_data($data, $js_filepath, FILE_EXISTS_REPLACE)) {
-      drupal_set_message(t('The file <code>!file</code> could not be created. Please consult your !watchdog for a detailed error description.', array('!file' => $js_filepath, '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');
+    if (!file_unmanaged_save_data($data, $filepath, FILE_EXISTS_REPLACE)) {
+      drupal_set_message(t('The file <code>!file</code> could not be created. Please consult your !watchdog for a detailed error description.', array('!file' => $filepath, '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');
     };
   }
   catch (Exception $e) {
     // If compilation failed.
-    drupal_set_message(t('Could not compile the file <code>!file</code>. Please consult your !watchdog for a detailed error description.', array('!file' => basename($file['data']), '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');
+    drupal_set_message(t('Could not compile the file <code>!file</code>. Please consult your !watchdog for a detailed error description.', array('!file' => basename($filepath), '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');
     watchdog('wraith', '<pre>' . $e->getMessage() . '</pre>', NULL, WATCHDOG_DEBUG, NULL);
   }
 }
