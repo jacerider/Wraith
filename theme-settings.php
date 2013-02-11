@@ -104,7 +104,7 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#title' => t('Compiled files path'),
   );
   $form['wraith_settings']['wraith_sass']['wraith_compiled_path']['description'] = array(
-    '#markup' => '<div class="description">' . t('Set the path to where you would like compiled files to be stored. defaults to <code>!files</code>', array('!files' => $files_directory)) . '</br>' .
+    '#markup' => '<div class="description">' . t('Set the path to where you would like compiled files to be stored. defaults to <code>!files</code>', array('!files' => $files_directory)) . '</ br>' .
     t('Compiled files will be stored in a sub-directory with the theme name so entering the path to your themes directory here will place the copiled files in a <code>/stylesheets/</code> directory under each theme\'s directory.') . '</div>',
   );
   $form['wraith_settings']['wraith_sass']['wraith_compiled_path']['wraith_compiler_destination'] = array(
@@ -305,6 +305,42 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('JavaScript Settings'),
   );
+  $form['wraith_settings']['wraith_js']['wraith_jquery'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('jQuery'),
+  );
+  $form['wraith_settings']['wraith_js']['wraith_jquery']['jquery_update_jquery_version'] = array(
+    '#type' => 'select',
+    '#title' => t('jQuery Version'),
+    '#options' => array(
+      '1.5' => '1.5',
+      '1.7' => '1.7',
+      '1.8' => '1.8',
+    ),
+    '#default_value' => theme_get_setting('jquery_update_jquery_version') ? theme_get_setting('jquery_update_jquery_version') : '1.7',
+    '#description' => t('Select which jQuery version branch to use.'),
+  );
+  $form['wraith_settings']['wraith_js']['wraith_jquery']['jquery_update_compression_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('jQuery compression level'),
+    '#options' => array(
+      'min' => t('Production (minified)'),
+      'none' => t('Development (uncompressed)'),
+    ),
+    '#default_value' => theme_get_setting('jquery_update_compression_type') ? theme_get_setting('jquery_update_compression_type') : 'min',
+  );
+  $form['wraith_settings']['wraith_js']['wraith_jquery']['jquery_update_jquery_cdn'] = array(
+    '#type' => 'select',
+    '#title' => t('jQuery and jQuery UI CDN'),
+    '#options' => array(
+      'none' => t('None'),
+      'google' => t('Google'),
+      'microsoft' => t('Microsoft'),
+      'jquery' => t('jQuery'),
+    ),
+    '#default_value' => theme_get_setting('jquery_update_jquery_cdn') ? theme_get_setting('jquery_update_jquery_cdn') : 'none',
+    '#description' => t('Use jQuery and jQuery UI from a CDN. If the CDN is not available the local version of jQuery and jQuery UI will be used.'),
+  );
   $form['wraith_settings']['wraith_js']['wraith_js_footer_wrapper'] = array(
     '#type' => 'fieldset',
     '#title' => t('Move JavaScript to footer'),
@@ -323,8 +359,33 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
   );
   $form['wraith_settings']['wraith_js']['wraith_aggregatejs']['wraith_aggregate_js'] = array(
     '#type' => 'checkbox',
-    '#title' => t("Aggregate all global js files into one minified and compressed file."),
+    '#title' => t("Enable this extension."),
+    '#description' => t('Select files that will be agreegate into a global file.'),
     '#default_value' => theme_get_setting('wraith_aggregate_js'),
+  );
+  $form['wraith_settings']['wraith_js']['wraith_aggregatejs']['files'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Specific JS files'),
+    '#description' => t('Aggregate specific JS files from core and contrib modules.') . $select_toggle,
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
+  $js = wraith_get_assets_list('js');
+  $saved = theme_get_setting('wraith_aggregate_js_files');
+  $saved = empty($saved) ? array() : $saved;
+  $new = array();
+  foreach($saved as $key => $value){
+    if($value) $new[$key] = $value;
+  }
+  $saved = array_merge($new,$saved);
+  $options = array_merge($saved,$js);
+  $form['wraith_settings']['wraith_js']['wraith_aggregatejs']['files']['wraith_aggregate_js_files'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Aggregate specific JS files.'),
+    '#options' => $options,
+    '#default_value' => theme_get_setting('wraith_aggregate_js_files') ? theme_get_setting('wraith_aggregate_js_files') : array(),
+    '#after_build' => array('wraith_aggregate_js_files_after'),
   );
   // Disable JS
   $form['wraith_settings']['wraith_js']['wraith_disablejs'] = array(
@@ -533,4 +594,45 @@ function wraith_sass_validate($element, &$form_state) {
     cache_clear_all('*', 'cache_page', TRUE);
     drupal_set_message(t('Your Sass files will be recompiled'), 'status');
   }
+}
+
+function wraith_aggregate_js_files_after($element) {
+  //dsm($element);
+
+  drupal_add_tabledrag('wraith-aggregate-sort', 'order', 'sibling', 'weight'); // needed for table dragging
+
+  $header = array(
+    'markup' => '',
+    'weight' => '',
+  );
+
+  $rows = array();
+  foreach (element_children($element) as $key) {
+    $row = array();
+
+    $row['data'][] = drupal_render($element[$key]);
+    $row['class'] = array('draggable');
+
+    $weight = array(
+      '#type' => 'textfield',
+      '#attributes' => array('class'=>array('weight'))
+    );
+    $row['data'][] = drupal_render($weight);
+    $row['class'] = array('draggable');
+    // foreach ($header as $fieldname => $title) {
+    //   $row['data'][] = drupal_render($element[$key]);
+    //   $row['class'] = array('draggable'); // needed for table dragging
+    // }
+    $rows[] = $row;
+  }
+
+  $element['table'] = array(
+    '#markup' =>theme('table', array(
+      'header' => $header,
+      'rows' => $rows,
+      'attributes' => array('id' => 'wraith-aggregate-sort'), // needed for table dragging
+    )
+  ));
+
+  return $element;
 }
