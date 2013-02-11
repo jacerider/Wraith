@@ -18,12 +18,16 @@ function wraith_js_alter(&$js) {
   //   unset($js['misc/jquery.js']);
   // }
 
+  // Replace jQuery
+  require_once drupal_get_path('theme', 'wraith') . '/includes/replace.inc';
+  wraith_js_alter_replace($js);
+
   // Disable core and modules JS via theme settings
   if (theme_get_setting('wraith_disable_js')) {
     $disable_files = array();
     // remove selected JS files
     if ($modules = theme_get_setting('wraith_disable_js_modules')) {
-      $disable_files = array_merge($disable_files, wraith_get_assets_list('js', $modules));
+      //$disable_files = array_merge($disable_files, wraith_get_assets_list('js', $modules));
     }
     if (is_array(theme_get_setting('wraith_disable_js_files')) && $files = array_filter(theme_get_setting('wraith_disable_js_files'))) {
       $disable_files = array_merge($disable_files, $files);
@@ -345,42 +349,48 @@ function wraith_get_modules_list($options = FALSE) {
  * Returns a list of assets (js/css)
  */
 function wraith_get_assets_list($type = 'css', $filter = array(), $exclude = array()) {
-  $files = array();
-  $enabled_modules = wraith_get_modules_list(TRUE);
+  $cache = &drupal_static(__FUNCTION__);
+  if (!isset($cache[$type])) {
+    $files = array();
+    $enabled_modules = wraith_get_modules_list(TRUE);
 
-  if (is_array($filter) && count($filter)) {
-    $filter = array_combine($filter, $filter);
-    $modules = array_intersect_key($enabled_modules, $filter);
-  }
-  elseif ($filter == 'jquery' && isset($modules['jquery'])) {
-    $modules['jquery']->filename = 'misc/jquery.js';
-  }
-  elseif ($filter == 'wraith') {
-    $modules['wraith']->filename = drupal_get_path('theme', 'wraith') . '/assets/scripts/wraith.js';
-  }
-  else {
-    $modules = $enabled_modules;
-  }
+    if (is_array($filter) && count($filter)) {
+      $filter = array_combine($filter, $filter);
+      $modules = array_intersect_key($enabled_modules, $filter);
+    }
+    elseif ($filter == 'jquery' && isset($modules['jquery'])) {
+      $modules['jquery']->filename = 'misc/jquery.js';
+    }
+    elseif ($filter == 'wraith') {
+      $modules['wraith']->filename = drupal_get_path('theme', 'wraith') . '/assets/scripts/wraith.js';
+    }
+    else {
+      $modules = $enabled_modules;
+      $modules += list_themes();
+    }
 
-  if(is_array($exclude) && count($exclude)){
-    $filter = array_combine($exclude, $exclude);
-    $modules = array_diff_key($modules, $filter);
-  }
+    if(is_array($exclude) && count($exclude)){
+      $filter = array_combine($exclude, $exclude);
+      $modules = array_diff_key($modules, $filter);
+    }
 
-  foreach ($modules as $name => $module) {
-    $module_path = pathinfo($module->filename, PATHINFO_DIRNAME);
-    $module_assets_files = file_scan_directory($module_path, '/.*\.' . $type . '$/');
+    foreach ($modules as $name => $module) {
+      $module_path = pathinfo($module->filename, PATHINFO_DIRNAME);
+      $module_assets_files = file_scan_directory($module_path, '/.*\.' . $type . '$/');
+      foreach ($module_assets_files as $path => $file) {
+        $files[$path] = $path;
+      }
+    }
+
+    $module_assets_files = file_scan_directory('misc', '/.*\.' . $type . '$/');
     foreach ($module_assets_files as $path => $file) {
       $files[$path] = $path;
     }
+
+    $cache[$type] = $files;
   }
 
-  $module_assets_files = file_scan_directory('misc', '/.*\.' . $type . '$/');
-  foreach ($module_assets_files as $path => $file) {
-    $files[$path] = $path;
-  }
-
-  return $files;
+  return $cache[$type];
 }
 
 /**
