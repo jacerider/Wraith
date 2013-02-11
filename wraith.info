@@ -58,4 +58,8 @@ settings[wraith_enable_css_modules][] = 'devel'
 settings[wraith_enable_css_modules][] = 'toolbar'
 settings[wraith_enable_css_files][] = 'modules/system/system.base.css'
 
+settings[jquery_update_jquery_version] = '1.7'
+settings[jquery_update_compression_type] = 'min'
+settings[jquery_update_jquery_cdn] = 'none'
+
 settings[wraith_js_footer] = 1
