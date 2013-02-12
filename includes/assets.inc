@@ -179,6 +179,7 @@ function wraith_get_bootstrap_scss($options = FALSE) {
     '_tables',
     // Components: common
     '_sprites',
+    '_dropdowns',
     '_wells',
     '_component-animations',
     '_close',
@@ -221,11 +222,24 @@ function wraith_get_bootstrap_scss($options = FALSE) {
  */
 function wraith_get_bootstrap_js($options = FALSE) {
   $return = array();
-  $directory = drupal_get_path('theme', 'wraith').'/assets/bootstrap/javascripts';
-  foreach(file_scan_directory($directory, "/^.*\.(js)$/i") as $s){
-    if($s->name == 'bootstrap') continue;
-    $label = ucwords(str_replace('_', '', str_replace('-', ' ', $s->name)));
-    $return[$s->name] = $label;
+  $files = array(
+    'bootstrap-transition',
+    'bootstrap-affix',
+    'bootstrap-alert',
+    'bootstrap-button',
+    'bootstrap-carousel',
+    'bootstrap-collapse',
+    'bootstrap-dropdown',
+    'bootstrap-modal',
+    'bootstrap-scrollspy',
+    'bootstrap-tab',
+    'bootstrap-tooltip',
+    'bootstrap-popover',
+    'bootstrap-typeahead'
+  );
+  foreach($files as $s){
+    $label = ucwords(str_replace('_', '', str_replace('-', ' ', $s)));
+    $return[$s] = $label;
   }
   return $return;
 }
