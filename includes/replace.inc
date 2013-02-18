@@ -119,23 +119,8 @@ function wraith_jquery_replace(&$js, $cdn, $path, $min, $version) {
  *   - microsoft
  */
 function wraith_jqueryui_replace(&$js, $cdn, $path, $min) {
-  // Return if not needed
-  if(empty($js['misc/ui/jquery-ui'.$min.'.js'])) return;
 
-  // Replace all CSS files.
-  $names = drupal_map_assoc(array(
-    'ui.accordion', 'ui.autocomplete', 'ui.button', 'ui.datepicker',
-    'ui.dialog', 'ui.progressbar', 'ui.resizable', 'ui.selectable',
-    'ui.slider', 'ui.tabs',
-  ));
-  $names['ui'] = 'ui.core';
-  $csspath = $path . '/replace/ui/themes/base/' . (($min == '.min') ? 'minified/' : '');
-  foreach ($names as $name => $file) {
-    if(!isset($js["misc/ui/jquery.$file.css"])) continue;
-    $js["misc/ui/jquery.$file.css"]['data'] = $csspath . 'jquery.' . $file . $min . '.css';
-  }
-  // Make sure ui.theme is replaced as well.
-  if(!empty($js['misc/ui/jquery.ui.theme.css'])) $js['misc/ui/jquery.ui.theme.css']['data'] = $csspath . 'jquery.ui.theme' . $min . '.css';
+  if(empty($css['misc/ui/jquery.ui.core.min.js']) && empty($css['misc/ui/jquery.ui.core.js'])) return;
 
   // Replace jQuery UI's JavaScript, beginning by defining the mapping.
   $names = drupal_map_assoc(array(
@@ -238,7 +223,6 @@ function wraith_jqueryui_local(&$js, $path, $min, $names) {
   foreach ($names as $name => $file) {
     $corefile = 'misc/ui/jquery.' . $file . '.min.js';
     if(!isset($js[$corefile])) continue;
-    $js[$name]['js'][$corefile]['data'] = $jspath . 'jquery.' . $file . $min . '.js';
-    $js[$name]['version'] = '1.8.11';
+    $js[$corefile]['data'] = $jspath . 'jquery.' . $file . $min . '.js';
   }
 }
