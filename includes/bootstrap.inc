@@ -207,6 +207,15 @@ function wraith_links__both($variables) {
 /**
 * Display a view as a table style.
 */
+function wraith_preprocess_table(&$variables) {
+  if (isset($variables['attributes']['class']) && is_string($variables['attributes']['class'])) {
+    // Convert classes to an array.
+    $variables['attributes']['class'] = explode(' ', $variables['attributes']['class']);
+  }
+  $variables['attributes']['class'][] = 'table';
+  $variables['attributes']['class'][] = 'table-striped';
+}
+
 function wraith_preprocess_views_view_table(&$vars) {
   if(empty($vars['attributes']['class'])){
     $vars['attributes']['class'][] = 'table-striped';
