@@ -187,6 +187,11 @@ function wraith_pick_files($items) {
  *   A string that represents the processed contents of the stylesheet.
  */
 function wraith_load_stylesheet($file) {
+  //@TODO Find a better way to do this.
+  // If develop mode is enabled, we will use imports instead of full content.
+  // This means we aren't able to do URL replacements. UGH.
+  if(theme_get_setting('wraith_devel')) return '@import "'.drupal_realpath($file).'";'."\n";
+
   $data =  file_get_contents($file);
   // Build the base URL of this CSS file. Start with the full URL.
   $base = file_create_url($file);
@@ -224,7 +229,6 @@ function wraith_load_stylesheet($file) {
  *   The transformed CSS as a string.
  */
 function wraith_parse($data, $file, $syntax, $theme_name) {
-
   $images_path = theme_get_setting('wraith_images_path') ? theme_get_setting('wraith_images_path') : drupal_get_path('theme', $theme_name) . '/assets/images';
   $fonts_path = theme_get_setting('wraith_fonts_path') ? theme_get_setting('wraith_fonts_path') : drupal_get_path('theme', $theme_name) . '/assets/fonts';
   $stylesheets_path = drupal_get_path('theme', $theme_name) . '/stylesheets';
@@ -245,6 +249,7 @@ function wraith_parse($data, $file, $syntax, $theme_name) {
     'syntax' => $syntax,
     'directory' => theme_get_setting('wraith_compiler_destination') ? theme_get_setting('wraith_compiler_destination') . '/' . $theme_name : $files_directory,
     'load_paths' => $load_paths,
+    //'debug_info' => false,
     'debug_info' => theme_get_setting('wraith_devel'),
     'no_line_comments' => theme_get_setting('wraith_devel') ? false : true,
     'compass_path' => variable_get('wraith_compass_path', 'compass'),
