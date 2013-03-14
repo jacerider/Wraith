@@ -31,6 +31,13 @@ function wraith_js_alter_replace(&$js){
   if (isset($js['misc/states.js']) && version_compare($version, '1.7', '>=')) {
     $js['misc/states.js']['data'] = $path . '/replace/misc/1.7/states.js';
   }
+
+  // Replace default drupal progress bar
+  if(isset($js['misc/progress.js'])){
+    $js[$path.'/replace/misc/progress.js'] = $js['misc/progress.js'];
+    $js[$path.'/replace/misc/progress.js']['data'] = $path.'/replace/misc/progress.js';
+    unset($js['misc/progress.js']);
+  }
 }
 
 /**
