@@ -152,27 +152,6 @@ function wraith_css_alter(&$css) {
     }
   }
 
-  // Replace CSS with recent jquery files
-  if(!empty($css['misc/ui/jquery.ui.theme.css'])){
-    $path = drupal_get_path('theme', 'wraith').'/assets';
-    $min = theme_get_setting('jquery_update_compression_type') ? theme_get_setting('jquery_update_compression_type') : 'min';
-    $min = $min == 'none' ? '' : '.min';
-    // Replace all CSS files.
-    $names = drupal_map_assoc(array(
-      'ui.accordion', 'ui.autocomplete', 'ui.button', 'ui.datepicker',
-      'ui.dialog', 'ui.progressbar', 'ui.resizable', 'ui.selectable',
-      'ui.slider', 'ui.tabs',
-    ));
-    $names['ui'] = 'ui.core';
-    $csspath = $path . '/replace/ui/themes/base/' . (($min == '.min') ? 'minified/' : '');
-    foreach ($names as $name => $file) {
-      if(!isset($css["misc/ui/jquery.$file.css"])) continue;
-      $css["misc/ui/jquery.$file.css"]['data'] = $csspath . 'jquery.' . $file . $min . '.css';
-    }
-    // Make sure ui.theme is replaced as well.
-    if(!empty($css['misc/ui/jquery.ui.theme.css'])) $css['misc/ui/jquery.ui.theme.css']['data'] = $csspath . 'jquery.ui.theme' . $min . '.css';
-  }
-
   if (theme_get_setting('wraith_sass')) {
     wraith_sass_alter($css);
   }

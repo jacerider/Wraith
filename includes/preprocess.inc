@@ -90,18 +90,18 @@ function wraith_preprocess_html(&$vars) {
 
   // Keyboard shortcut to recompile Sass
   // ToDo: Remove the admin-menu dependency
-  // if (theme_get_setting('wraith_sass') && theme_get_setting('wraith_devel') && user_access('administer themes') && !theme_get_setting('wraith_disable_wraith_js')) {
-  //   $inline_code = 'jQuery(document).bind("keydown", "alt+c", function() {
-  //     window.location.href = "//" + window.location.host + window.location.pathname + "?recompile=true"
-  //   });
-  //   jQuery(document).bind("keydown", "alt+p", function() {
-  //     window.location.href = "//" + window.location.host + window.location.pathname + "?recompile-for-prod=true"
-  //   });';
-  //   drupal_add_js(drupal_get_path('theme', 'wraith') . '/scripts/jquery.hotkeys.js');
-  //   drupal_add_js($inline_code,
-  //     array('type' => 'inline', 'scope' => 'footer')
-  //   );
-  // }
+  if (theme_get_setting('wraith_sass') && theme_get_setting('wraith_devel') && user_access('administer themes') && !theme_get_setting('wraith_disable_wraith_js')) {
+    $inline_code = 'jQuery(document).bind("keydown", "alt+c", function() {
+      window.location.href = "//" + window.location.host + window.location.pathname + "?recompile=true"
+    });
+    jQuery(document).bind("keydown", "alt+p", function() {
+      window.location.href = "//" + window.location.host + window.location.pathname + "?recompile-for-prod=true"
+    });';
+    drupal_add_js(drupal_get_path('theme', 'wraith') . '/scripts/jquery.hotkeys.js');
+    drupal_add_js($inline_code,
+      array('type' => 'inline', 'scope' => 'footer')
+    );
+  }
 
   // Since menu is rendered in preprocess_page we need to detect it here to add body classes
   $has_main_menu = theme_get_setting('toggle_main_menu');
