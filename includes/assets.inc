@@ -7,16 +7,6 @@
  * checks to see if any of them are disabled via theme settings.
  */
 function wraith_js_alter(&$js) {
-  // Replace core's jQuery with latest version from Google's CDN
-  // if (theme_get_setting('wraith_latest_jquery')) {
-  //   $path = '//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js';
-  //   $js[$path] = $js['misc/jquery.js'];
-  //   // Update necessary settings
-  //   $js[$path]['version'] = 'latest';
-  //   $js[$path]['data'] = $path;
-  //   // Remove core's jQuery
-  //   unset($js['misc/jquery.js']);
-  // }
 
   // Replace jQuery
   require_once drupal_get_path('theme', 'wraith') . '/includes/replace.inc';
@@ -189,6 +179,7 @@ function wraith_get_bootstrap_scss($options = FALSE) {
     '_tables',
     // Components: common
     '_sprites',
+    '_dropdowns',
     '_wells',
     '_component-animations',
     '_close',
@@ -231,11 +222,24 @@ function wraith_get_bootstrap_scss($options = FALSE) {
  */
 function wraith_get_bootstrap_js($options = FALSE) {
   $return = array();
-  $directory = drupal_get_path('theme', 'wraith').'/assets/bootstrap/javascripts';
-  foreach(file_scan_directory($directory, "/^.*\.(js)$/i") as $s){
-    if($s->name == 'bootstrap') continue;
-    $label = ucwords(str_replace('_', '', str_replace('-', ' ', $s->name)));
-    $return[$s->name] = $label;
+  $files = array(
+    'bootstrap-transition',
+    'bootstrap-affix',
+    'bootstrap-alert',
+    'bootstrap-button',
+    'bootstrap-carousel',
+    'bootstrap-collapse',
+    'bootstrap-dropdown',
+    'bootstrap-modal',
+    'bootstrap-scrollspy',
+    'bootstrap-tab',
+    'bootstrap-tooltip',
+    'bootstrap-popover',
+    'bootstrap-typeahead'
+  );
+  foreach($files as $s){
+    $label = ucwords(str_replace('_', '', str_replace('-', ' ', $s)));
+    $return[$s] = $label;
   }
   return $return;
 }
@@ -350,7 +354,11 @@ function wraith_get_modules_list($options = FALSE) {
  */
 function wraith_get_assets_list($type = 'css', $filter = array(), $exclude = array()) {
   $cache = &drupal_static(__FUNCTION__);
-  if (!isset($cache[$type])) {
+  $cid = '';
+  if(is_array($filter) && count($filter)) $cid .= implode('', array_keys($filter));
+  if(is_array($exclude) && count($exclude)) $cid .= implode('', array_keys($exclude));
+  $cid = $type.substr(drupal_hash_base64($cid), 0, 25);
+  if (!isset($cache[$cid])) {
     $files = array();
     $enabled_modules = wraith_get_modules_list(TRUE);
 
