@@ -376,7 +376,11 @@ function wraith_fieldset($vars) {
     $output = '<fieldset' . drupal_attributes($element['#attributes']) . '>';
     if (!empty($element['#title'])) {
       // Always wrap fieldset legends in a SPAN for CSS positioning.
-      $output .= '<legend class="js-hide"><span class="fieldset-legend">' . $element['#title'] . '</span></legend>';
+      if(empty($element['#collapsible'])){
+        $output .= '<legend><span class="fieldset-legend">' . $element['#title'] . '</span></legend>';
+      }else{
+        $output .= '<legend class="js-hide"><span class="fieldset-legend">' . $element['#title'] . '</span></legend>';
+      }
     }
     $output .= '<div class="fieldset-wrapper clearfix">';
     if (!empty($element['#description'])) {
