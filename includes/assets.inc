@@ -250,7 +250,7 @@ function wraith_get_bootstrap_js($options = FALSE) {
 function wraith_bootstrap_include(){
   $scss = theme_get_setting('wraith_bootstrap_scss');
   $path = drupal_get_path('theme', 'wraith').'/assets/bootstrap/stylesheets/bootstrap';
-  $override = drupal_get_path('theme', 'wraith').'/assets/override';
+  $override = path_to_theme().'/assets/override';
   $options = array(
     'every_page' => TRUE,
     'weight' => -1000
