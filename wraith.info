@@ -2,6 +2,7 @@
 ; required information about the theme
 
 name = Wraith
+version = 1.0
 description = Wraith is a base theme for advanced drupal theming.
 screenshot = assets/images/wraith.png
 core = 7.x
