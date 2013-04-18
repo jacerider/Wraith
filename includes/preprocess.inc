@@ -166,25 +166,32 @@ function wraith_preprocess_html(&$vars) {
 
   // File-Watcher - auto-refresh the browser when a file is updated
   if (theme_get_setting('wraith_watcher') && user_access('administer themes')) {
-    global $base_url;
-    $list = theme_get_setting('wraith_watch_sass') ? array_map('trim',wraith_get_scss_list()) : array();
-    $additional = array_map('trim',explode("\n", theme_get_setting('wraith_watch_file')));
-    if(!empty($additional)) $list += $additional;
-    $instant = theme_get_setting('wraith_instant_watcher');
-    if($instant && theme_get_setting('wraith_sass')){
-      $css = drupal_add_css();
-      $files = wraith_sass_global_info(wraith_pick_files($css));
-    }
-    $watcher = "(function () {\n";
-    foreach ($list as $file){
-      if (substr($file, 0, 1) !== ';') {
-        $actual = isset($files) && isset($files['files'][$file]) ? basename($files['cid']) : 0;
-        $watcher .= "  Drupal.wraith.watch('" . $base_url . "/" . $file . "', " . $instant . ", '" . $actual . "');\n";
+
+    // Only supports SASS right now
+    if(theme_get_setting('wraith_watch_sass')){
+      global $base_url;
+      $scss = wraith_get_scss_all();
+      // Remove core wraith files as they are never changed
+      $scss = array_filter($scss, "wraith_remove_wraith_files");
+      $list = array();
+      foreach($scss as $filepath => $data) $list[] = $filepath;
+      $additional = array_map('trim',explode("\n", theme_get_setting('wraith_watch_file')));
+      if(!empty($additional)) $list += $additional;
+      $instant = theme_get_setting('wraith_instant_watcher');
+      if($instant && theme_get_setting('wraith_sass')){
+        $files = wraith_sass_global_info($scss);
       }
+      $watcher = "(function () {\n";
+      foreach ($list as $file){
+        if (substr($file, 0, 1) !== ';') {
+          $actual = isset($files) && isset($files['files'][$file]) ? basename($files['cid']) : 0;
+          $watcher .= "  Drupal.wraith.watch('" . $base_url . "/" . $file . "', " . $instant . ", '" . $actual . "');\n";
+        }
+      }
+      $watcher .= "}());";
+      drupal_add_js(drupal_get_path('theme', 'wraith') . '/assets/scripts/fileWatcher.js' , array('scope' => 'footer'));
+      drupal_add_js($watcher, array('type' => 'inline', 'scope' => 'footer'));
     }
-    $watcher .= "}());";
-    drupal_add_js(drupal_get_path('theme', 'wraith') . '/assets/scripts/fileWatcher.js' , array('scope' => 'footer'));
-    drupal_add_js($watcher, array('type' => 'inline', 'scope' => 'footer'));
   }
 
 }
