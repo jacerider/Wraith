@@ -250,6 +250,7 @@ function wraith_get_bootstrap_js($options = FALSE) {
 function wraith_bootstrap_include(){
   $scss = theme_get_setting('wraith_bootstrap_scss');
   $path = drupal_get_path('theme', 'wraith').'/assets/bootstrap/stylesheets/bootstrap';
+  $override = drupal_get_path('theme', 'wraith').'/assets/override';
   $options = array(
     'every_page' => TRUE,
     'weight' => -1000
@@ -257,7 +258,12 @@ function wraith_bootstrap_include(){
   if(is_array($scss)){
     foreach($scss as $s){
       if(empty($s)) continue;
-      drupal_add_css($path.'/'.$s.'.scss', $options);
+      $use_path = $path;
+      // Allow local overriding of Bootstrap files
+      if(file_exists($override.'/'.$s.'.scss')){
+        $use_path = $override;
+      }
+      drupal_add_css($use_path.'/'.$s.'.scss', $options);
     }
   }
   $js = theme_get_setting('wraith_bootstrap_js');
