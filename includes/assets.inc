@@ -419,3 +419,19 @@ function wraith_get_scss_list(){
   }
   return $scss;
 }
+
+/**
+ * Get all scss files currently used on the page
+ */
+function wraith_get_scss_all(){
+  $css = drupal_add_css();
+  return wraith_pick_files($css);
+}
+
+/**
+ * A callback to remove all core Wraith files from wraith_get_scss_all
+ */
+function wraith_remove_wraith_files($scss){
+  $path = drupal_get_path('theme', 'wraith');
+  return strpos($scss['data'],$path) !== 0;
+}
