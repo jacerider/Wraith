@@ -120,10 +120,10 @@ function wraith_button($vars) {
 function wraith_preprocess_links(&$vars){
   if(isset($vars['attributes']['id'])){
     $id = str_replace('-','_',$vars['attributes']['id']);
-    $vars['theme_hook_suggestions'][] = 'links__'.$id;
     if(in_array($id, array('main_menu_links','secondary_menu_links'))){
       $vars['theme_hook_suggestions'][] = 'links__both';
     }
+    $vars['theme_hook_suggestions'][] = 'links__'.$id;
   }
 }
 
