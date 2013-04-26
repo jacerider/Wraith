@@ -19,3 +19,5 @@
   @include border-radius(3px);
   border:none;
 }
+
+.ellipsis { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
