@@ -397,3 +397,17 @@ function wraith_fieldset($vars) {
   }
   return $output;
 }
+
+function wraith_breadcrumb($variables) {
+  $breadcrumb = $variables['breadcrumb'];
+
+  if (!empty($breadcrumb)) {
+    // Provide a navigational heading to give context for breadcrumb links to
+    // screen-reader users. Make the heading invisible with .element-invisible.
+    $output = '<h2 class="element-invisible">' . t('You are here') . '</h2>';
+    $breadcrumb[] = '<span class="active">'.strip_tags(htmlspecialchars_decode(drupal_get_title())).'</span>';
+
+    $output .= '<div class="breadcrumb">' . implode(' <span class="divider">/</span> ', $breadcrumb) . '</div>';
+    return $output;
+  }
+}
