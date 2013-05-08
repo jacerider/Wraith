@@ -54,7 +54,7 @@ function drush_wraith_new_subtheme($name = NULL, $machine_name = NULL) {
     return;
   }
 
-  // Find Drupal install and wraith paths 
+  // Find Drupal install and wraith paths
   $root_path = drush_locate_root();
   $wraith_relative = drupal_get_path('theme', 'wraith');
 
@@ -65,7 +65,7 @@ function drush_wraith_new_subtheme($name = NULL, $machine_name = NULL) {
   $subtheme_relative = $themes_relative . '/' . $machine_name;
 
   // Construct absolute paths for copying
-  $wraith_path = $root_path  . '/' . $wraith_relative; 
+  $wraith_path = $root_path  . '/' . $wraith_relative;
   $subtheme_path = $root_path . '/' . $subtheme_relative;
 
   // Make a fresh copy of the original starter kit.
@@ -79,7 +79,7 @@ function drush_wraith_new_subtheme($name = NULL, $machine_name = NULL) {
   drush_op('rename', "$subtheme_path/assets/sass/SUB.scss", "$subtheme_path/assets/sass/$machine_name.scss");
   drush_op('rename', "$subtheme_path/assets/scripts/SUB.js", "$subtheme_path/assets/scripts/$machine_name.js");
   drush_op('rename', "$subtheme_path/assets/images/SUB.png", "$subtheme_path/assets/images/$machine_name.png");
-  drush_op('wraith_file_str_replace', "$subtheme_path/$machine_name.info", ', <strong>you shouldn\'t enable this starterkit</strong>. instead, use <em>drush wraith</em> or manually copy it to create a new sub-theme, check out the <a href="http://www.linnovate.net/blog/wraith-smart-drupal-theming">docs</a> or the README.txt for more info', "");
+  drush_op('wraith_file_str_replace', "$subtheme_path/$machine_name.info", ', <strong>you shouldn\'t enable this starterkit</strong>. instead, use <em>drush wraith</em> or the README.txt for more info', "");
   drush_op('wraith_file_str_replace', "$subtheme_path/$machine_name.info", 'sites/all/themes/SUB', "$subtheme_relative");
   drush_op('wraith_file_str_replace', "$subtheme_path/$machine_name.info", 'SUB', "$machine_name");
   drush_op('wraith_file_str_replace', "$subtheme_path/$machine_name.info", 'Starterkit', "$name");
