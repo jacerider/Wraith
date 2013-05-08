@@ -1,7 +1,26 @@
-/* 
- * ##### Wraith - advanced drupal theming. #####
- *   
- * SASS mixins
- * http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html#mixins
- * 
- */
+///////////////////////////////////////
+// Mixins
+///////////////////////////////////////
+
+// Responsive semantic columns
+// -------------------------------
+// https://gist.github.com/4527826
+
+@mixin row() {
+  margin-left: $gridGutterWidth * -1;
+  @media (max-width: 767px) { margin-left: 0; }
+  @media (min-width: 768px) and (max-width: 979px) { margin-left: $gridGutterWidth768 * -1; }
+  @media (min-width: 1200px) { margin-left: $gridGutterWidth1200 * -1; }
+  @include clearfix();
+}
+
+@mixin column($columns: 1, $offset: 0) {
+  float: left;
+  margin-left: ($gridColumnWidth * $offset) + ($gridGutterWidth * ($offset - 1)) + ($gridGutterWidth * 2);
+  width: ($gridColumnWidth * $columns) + ($gridGutterWidth * ($columns - 1));
+
+  @media (min-width: 1200px) {
+    margin-left: ($gridColumnWidth1200 * $offset) + ($gridGutterWidth1200 * ($offset - 1)) + ($gridGutterWidth1200 * 2);
+    width: ($gridColumnWidth1200 * $columns) + ($gridGutterWidth1200 * ($columns - 1));
+  }
+}
