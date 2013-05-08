@@ -60,6 +60,8 @@ settings[wraith_sass] = 1
 
 settings[wraith_bootstrap] = 1
 
+settings[wraith_font_awesome] = 1
+
 settings[wraith_bootstrap_scss][] = '_variables'
 settings[wraith_bootstrap_scss][] = '_mixins'
 settings[wraith_bootstrap_scss][] = '_reset'

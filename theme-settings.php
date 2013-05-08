@@ -131,21 +131,21 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
   $form['wraith_settings']['wraith_sass']['wraith_url_helpers']['wraith_images_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Path to images directory'),
-    '#description' => t('Set the path to your images, this may be used with the !imageurl helper function.', array('!imageurl' => '<a target="_blank" href="http://compass-style.org/reference/compass/helpers/urls/#image-url">image-url(..)</a>')),
+    '#description' => t('Set the path to your images, this may be used with the !imageurl helper function. Default path is %default.', array('!imageurl' => '<a target="_blank" href="http://compass-style.org/reference/compass/helpers/urls/#image-url">image-url(..)</a>', '%default' => url(drupal_get_path('theme', arg(3)) . '/assets/images'))),
     '#attributes' => array(
       'placeholder' => t('e.g. /path/to/images or http://yourhost.com/path/to/images'),
     ),
     '#default_value' => theme_get_setting('wraith_images_path'),
   );
-  // $form['wraith_settings']['wraith_sass']['wraith_url_helpers']['wraith_fonts_path'] = array(
-  //   '#type' => 'textfield',
-  //   '#title' => t('Path to fonts directory'),
-  //   '#description' => t('Set the path to your fonts, this may be used with the !fontsurl helper function.', array('!fontsurl' => '<a target="_blank" href="http://compass-style.org/reference/compass/helpers/urls/#font-url">font-url(..)</a>')),
-  //   '#attributes' => array(
-  //     'placeholder' => t('e.g. /path/to/fonts or http://yourhost.com/path/to/fonts'),
-  //   ),
-  //   '#default_value' => theme_get_setting('wraith_fonts_path'),
-  // );
+  $form['wraith_settings']['wraith_sass']['wraith_url_helpers']['wraith_fonts_path'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Path to fonts directory'),
+    '#description' => t('Set the path to your fonts, this may be used with the !fontsurl helper function. Default path is %default.', array('!fontsurl' => '<a target="_blank" href="http://compass-style.org/reference/compass/helpers/urls/#font-url">font-url(..)</a>', '%default' => url(drupal_get_path('theme', arg(3)) . '/assets/fonts'))),
+    '#attributes' => array(
+      'placeholder' => t('e.g. /path/to/fonts or http://yourhost.com/path/to/fonts'),
+    ),
+    '#default_value' => theme_get_setting('wraith_fonts_path'),
+  );
 
   $form['wraith_settings']['wraith_sass']['wraith_debbug'] = array(
     '#type' => 'fieldset',
@@ -206,6 +206,30 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#title' => t('Files'),
     '#options' => wraith_get_bootstrap_js(),
     '#default_value' => theme_get_setting('wraith_bootstrap_js') ? theme_get_setting('wraith_bootstrap_js') : array(),
+  );
+  $form['wraith_settings']['wraith_bootstrap']['wraith_bootstrap_overrides'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Bootstrap theme spectacular'),
+    '#description' => t('Theme overrides that make Drupal more Bootstrappy.'),
+    '#default_value' => theme_get_setting('wraith_bootstrap_overrides'),
+    '#prefix' => '<br />',
+  );
+
+  /**
+   * Bootstrap settings
+   */
+  $form['wraith_settings']['wraith_font'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Font settings'),
+  );
+  $form['wraith_settings']['wraith_font']['wraith_font_awesome'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Font Awesome'),
+    '#attributes' => array(
+      'class' => array('enable-extension'),
+    ),
+    '#description' => t('Use Font Awesome fonts').' | '.l('http://fortawesome.github.io/Font-Awesome/','http://fortawesome.github.io/Font-Awesome/'),
+    '#default_value' => theme_get_setting('wraith_font_awesome'),
   );
 
   /**
@@ -574,6 +598,24 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#default_value' => theme_get_setting('wraith_feed_icons'),
   );
 
+  $form['#validate'][] = 'wraith_form_system_theme_settings_alter_validate';
+
+}
+
+/**
+ * Clean up the form values before they are saved
+ *
+ * @author JaceRider
+ */
+function wraith_form_system_theme_settings_alter_validate($form, &$form_state){
+  $values = &$form_state['values'];
+  $values = _array_remove_null($values);
+
+  // If using Font Awesome -- deselect Bootstrap sprites
+  if(!empty($values['wraith_font_awesome']) && !empty($values['wraith_bootstrap_scss']['_sprites'])){
+    unset($values['wraith_bootstrap_scss']['_sprites']);
+    drupal_set_message('Bootstrap sprites have been disabled to make way for Font Awesome to be awesome.', 'warning');
+  }
 }
 
 /**
@@ -635,4 +677,20 @@ function wraith_aggregate_js_files_after($element) {
   ));
 
   return $element;
+}
+
+/**
+ * Remove empty values from nested array
+ *
+ * @author JaceRider
+ */
+function _array_remove_null($array) {
+  foreach ($array as $key => $value){
+    if(in_array($key, array('logo_path','favicon_path','logo_upload','favicon_upload'))) continue;
+    if(empty($value))
+      unset($array[$key]);
+    if(is_array($value))
+      $array[$key] = _array_remove_null($value);
+  }
+  return $array;
 }

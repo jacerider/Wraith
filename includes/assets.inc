@@ -284,12 +284,17 @@ function wraith_bootstrap_include(){
  * Include theme scss files
  */
 function wraith_scss_include(){
-  $path = drupal_get_path('theme', 'wraith').'/assets/sass';
+  $path = drupal_get_path('theme', 'wraith').'/assets';
   $options = array(
     'every_page' => TRUE,
   );
   foreach(wraith_get_scss_list() as $s){
     drupal_add_css($s, $options);
+  }
+
+  // Add Font Awesome
+  if(theme_get_setting('wraith_font_awesome')){
+    drupal_add_css($path.'/font-awesome/font-awesome.scss', $options);
   }
 }
 

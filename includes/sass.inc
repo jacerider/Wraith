@@ -187,23 +187,24 @@ function wraith_pick_files($items) {
  *   A string that represents the processed contents of the stylesheet.
  */
 function wraith_load_stylesheet($file) {
-  $data =  file_get_contents($file);
-  // Build the base URL of this CSS file. Start with the full URL.
-  $base = file_create_url($file);
-  // Move to the parent.
-  $base = substr($base, 0, strrpos($base, '/'));
-  // Simplify to a relative URL if the stylesheet URL starts with the base URL
-  // of the website.
-  if (substr($base, 0, strlen($GLOBALS['base_root'])) == $GLOBALS['base_root']) {
-    $base = substr($base, strlen($GLOBALS['base_root']));
-  }
-  _drupal_build_css_path(NULL, $base . '/');
+  $data = '@import "' .DRUPAL_ROOT . '/' .$file.'";'."\n";
+  // $data =  file_get_contents($file);
+  // // Build the base URL of this CSS file. Start with the full URL.
+  // $base = file_create_url($file);
+  // // Move to the parent.
+  // $base = substr($base, 0, strrpos($base, '/'));
+  // // Simplify to a relative URL if the stylesheet URL starts with the base URL
+  // // of the website.
+  // if (substr($base, 0, strlen($GLOBALS['base_root'])) == $GLOBALS['base_root']) {
+  //   $base = substr($base, strlen($GLOBALS['base_root']));
+  // }
+  // _drupal_build_css_path(NULL, $base . '/');
 
-  if (theme_get_setting('wraith_url_rewrite')) {
-    // Anchor all paths in the CSS with its base URL, ignoring external, absolute
-    // paths, and compass url helper functions.
-    $data = preg_replace_callback('/(?<!-)url\(\s*[\'"]?(?![a-z]+:|\/+)([^\'")]+)[\'"]?\s*\)/i', '_drupal_build_css_path', $data);
-  }
+  // if (theme_get_setting('wraith_url_rewrite')) {
+  //   // Anchor all paths in the CSS with its base URL, ignoring external, absolute
+  //   // paths, and compass url helper functions.
+  //   $data = preg_replace_callback('/(?<!-)url\(\s*[\'"]?(?![a-z]+:|\/+)([^\'")]+)[\'"]?\s*\)/i', '_drupal_build_css_path', $data);
+  // }
   return $data;
 }
 
@@ -289,7 +290,6 @@ function wraith_parse_compass($data, $file, $options) {
   };
   if (!file_unmanaged_save_data($data, $sass_filepath, FILE_EXISTS_REPLACE)) {
     drupal_set_message(t('The file <code>!file</code> could not be created. Please consult your !watchdog for a detailed error description.', array('!file' => $sass_filepath, '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');
-
   };
   // Let assetic compile it
   $asset = new FileAsset($sass_filepath,
@@ -312,6 +312,7 @@ function wraith_parse_compass($data, $file, $options) {
 
   try {
     $data = $asset->dump();
+    wraith_parse_data($data);
     // If no exceptions were thrown, try saving the result to a CSS file.
     if (!file_unmanaged_save_data($data, $css_filepath, FILE_EXISTS_REPLACE)) {
       drupal_set_message(t('The file <code>!file</code> could not be created. Please consult your !watchdog for a detailed error description.', array('!file' => $css_filepath, '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');
@@ -324,5 +325,20 @@ function wraith_parse_compass($data, $file, $options) {
     // If compilation failed.
     drupal_set_message(t('Could not compile the file <code>!file</code>. Please consult your !watchdog for a detailed error description.', array('!file' => basename($file['data']), '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');
     watchdog('wraith', '<pre>' . $e->getMessage() . '</pre>', NULL, WATCHDOG_DEBUG, NULL);
+  }
+}
+
+/**
+ * Post process compiled SCSS file
+ *
+ * @author JaceRider
+ *
+ * @param  $data
+ *   The complete CSS data about to be saved to file.
+ */
+function wraith_parse_data(&$data){
+  // Font Awesome path replace
+  if(theme_get_setting('wraith_font_awesome')){
+    $data = str_replace('../font/fontawesome', url(drupal_get_path('theme', 'wraith').'/assets/font/fontawesome'), $data);
   }
 }

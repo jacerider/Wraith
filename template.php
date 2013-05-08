@@ -17,6 +17,6 @@ if (theme_get_setting('wraith_sass')) {
 /**
  * Bootstrap
  */
-if (theme_get_setting('wraith_bootstrap')) {
+if (theme_get_setting('wraith_bootstrap_overrides')) {
   require_once $path_to_wraith . '/includes/bootstrap.inc';     // Bootstrap hooks
 }
