@@ -1,6 +1,7 @@
 ; Theme Info --------------------------------------------------------------
 
 name = Starterkit
+version = "1.0"
 description = Starterkit, sub-theme for Wraith, <strong>you shouldn't enable this starterkit</strong>. instead, use <em>drush wraith</em> or the README.txt for more info.
 screenshot = assets/images/SUB.png
 core = 7.x
