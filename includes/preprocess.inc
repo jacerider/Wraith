@@ -261,7 +261,7 @@ function wraith_preprocess_page(&$vars) {
   // Include bootstrap files
   $vars['sidebar_class'] = '';
   $vars['content_class'] = '';
-  if (theme_get_setting('wraith_bootstrap')) wraith_bootstrap_preprocess_page($vars);
+  if (theme_get_setting('wraith_bootstrap_overrides')) wraith_bootstrap_preprocess_page($vars);
 }
 
 /**
