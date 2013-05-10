@@ -70,13 +70,11 @@ function wraith_sass_global_info($files = array()){
  */
 function wraith_sass_alter(&$css) {
   global $theme_key;
-  $files = wraith_pick_files($css);
+  $files = wraith_pick_sass_files($css);
   uasort($files, 'drupal_sort_weight');
 
   // We can bail out here if there are no Sass files anyways.
   if (empty($files)) {
-    // Remove the files from the array of stylesheets.
-    $css = array_diff_key($css, $files);
     return $css;
   }
 
@@ -154,7 +152,7 @@ function wraith_sass_alter(&$css) {
  * @return
  *   The extracted files as an array.
  */
-function wraith_pick_files($items) {
+function wraith_pick_sass_files($items) {
   $files = &drupal_static(__FUNCTION__);
   if (!isset($files)){
     $files = array();
