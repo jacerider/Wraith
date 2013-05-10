@@ -6,7 +6,7 @@ require_once drupal_get_path('theme', 'wraith') . '/includes/assetic/vendor/auto
 // Manage filters
 use Assetic\Asset\AssetCollection;
 use Assetic\Asset\FileAsset;
-use Assetic\Filter\PackerFilter;
+// use Assetic\Filter\PackerFilter;
 
 function wraith_aggregate_js(&$js){
   $files = &drupal_static(__FUNCTION__);
@@ -128,21 +128,46 @@ function wraith_aggregate($files, $filepath, $directory) {
   }
 
   $asset = new AssetCollection($collection, array(
-    $packer = new PackerFilter(),
+    // Packer has trouble with missing delimiters is JS so for now we can't use it
+    //$packer = new PackerFilter(),
   ));
 
   try {
     //$asset->load();
     $data = $asset->dump();
+
+    // Compress file
+    $data = wraith_uglifyjs($data);
+
     // If no exceptions were thrown, try saving the result to a JS file.
     //$data = gzencode($data, 9, FORCE_GZIP);
     if (!file_unmanaged_save_data($data, $filepath, FILE_EXISTS_REPLACE)) {
       drupal_set_message(t('The file <code>!file</code> could not be created. Please consult your !watchdog for a detailed error description.', array('!file' => $filepath, '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');
-    };
+    }
   }
   catch (Exception $e) {
     // If compilation failed.
     drupal_set_message(t('Could not compile the file <code>!file</code>. Please consult your !watchdog for a detailed error description.', array('!file' => basename($filepath), '!watchdog' => l('log messages', 'admin/reports/dblog'))), 'error');
     watchdog('wraith', '<pre>' . $e->getMessage() . '</pre>', NULL, WATCHDOG_DEBUG, NULL);
   }
+}
+
+function wraith_uglifyjs($data){
+  try {
+    $uglify_service = variable_get('wraith_uglify_endpoint', 'http://uglify.me') . '/uglify';
+    $data = drupal_http_request(
+      $uglify_service,
+      array(
+        'method' => 'POST',
+        'data' => $data,
+      )
+    );
+    if(!empty($data->data)){
+      return $data->data;
+    }
+  }
+  catch (Exception $e) {
+    watchdog('wraith', 'Count not use uglifyjs to... ummmm... uglify the js.', NULL, WATCHDOG_DEBUG, NULL);
+  }
+  return $data;
 }
