@@ -104,7 +104,7 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#title' => t('Compiled files path'),
   );
   $form['wraith_settings']['wraith_sass']['wraith_compiled_path']['description'] = array(
-    '#markup' => '<div class="description">' . t('Set the path to where you would like compiled files to be stored. defaults to <code>!files</code>', array('!files' => $files_directory)) . '</ br>' .
+    '#markup' => '<div class="description">' . t('Set the path to where you would like compiled files to be stored. defaults to <code>!files</code>', array('!files' => $files_directory)) . '<br />' .
     t('Compiled files will be stored in a sub-directory with the theme name so entering the path to your themes directory here will place the copiled files in a <code>/stylesheets/</code> directory under each theme\'s directory.') . '</div>',
   );
   $form['wraith_settings']['wraith_sass']['wraith_compiled_path']['wraith_compiler_destination'] = array(
@@ -320,6 +320,57 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#title' => t('Files'),
     '#options' => wraith_get_assets_list(),
     '#default_value' => theme_get_setting('wraith_disable_css_files') ? theme_get_setting('wraith_disable_css_files') : array(),
+  );
+
+  /**
+   * Coffee Settings
+   */
+  $form['wraith_settings']['wraith_coffee'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Coffee Settings'),
+  );
+  $form['wraith_settings']['wraith_coffee']['wraith_coffee'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Compile Coffee to JS'),
+    '#attributes' => array(
+      'class' => array('enable-extension'),
+    ),
+    '#description' => t('Write your code as coffee in files title *.js.coffee'),
+    '#default_value' => theme_get_setting('wraith_coffee'),
+  );
+  $form['wraith_settings']['wraith_coffee']['wraith_coffee_coffeebin'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Path to Coffee Bin'),
+    '#description' => t('Default path is %default.', array('%default' => '/usr/bin/coffee')),
+    '#attributes' => array(
+      'placeholder' => t('/usr/bin/coffee'),
+    ),
+    '#default_value' => theme_get_setting('wraith_coffee_coffeebin'),
+  );
+  $form['wraith_settings']['wraith_coffee']['wraith_coffee_nodebin'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Path to NodeJS Bin'),
+    '#description' => t('Default path is %default.', array('%default' => '/usr/bin/node')),
+    '#attributes' => array(
+      'placeholder' => t('/usr/bin/node'),
+    ),
+    '#default_value' => theme_get_setting('wraith_coffee_nodebin'),
+  );
+  $files_directory = variable_get('file_' . file_default_scheme() . '_path', conf_path() . '/files') . '/wraith';
+  $form['wraith_settings']['wraith_coffee']['wraith_coffee_compiled_path'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Compiled files path'),
+  );
+  $form['wraith_settings']['wraith_coffee']['wraith_coffee_compiled_path']['description'] = array(
+    '#markup' => '<div class="description">' . t('Set the path to where you would like compiled files to be stored. defaults to <code>!files</code>', array('!files' => $files_directory)) . '<br />' .
+    t('Compiled files will be stored in a sub-directory with the theme name so entering the path to your themes directory here will place the copiled files in a <code>/js/</code> directory under each theme\'s directory.') . '</div>',
+  );
+  $form['wraith_settings']['wraith_coffee']['wraith_coffee_compiled_path']['wraith_coffee_compiler_destination'] = array(
+    '#type' => 'textfield',
+    '#attributes' => array(
+      'placeholder' => t('e.g.') . ' sites/all/themes',
+    ),
+    '#default_value' => theme_get_setting('wraith_coffee_compiler_destination'),
   );
 
   /**

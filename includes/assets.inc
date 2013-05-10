@@ -43,6 +43,11 @@ function wraith_js_alter(&$js) {
     }
   }
 
+  if (theme_get_setting('wraith_coffee')) {
+    require_once drupal_get_path('theme', 'wraith') . '/includes/coffee.inc';
+    wraith_aggregate_coffee($js);
+  }
+
   if(theme_get_setting('wraith_aggregate_js')){
     require_once drupal_get_path('theme', 'wraith') . '/includes/js.inc';
     wraith_aggregate_js($js);
