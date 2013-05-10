@@ -120,7 +120,7 @@ function wraith_aggregate($files, $filepath, $directory) {
   };
 
   // Let assetic compile it
-  require_once drupal_get_path('theme','wraith').'/includes/packer/class.JavaScriptPacker.php';
+  // require_once drupal_get_path('theme','wraith').'/includes/packer/class.JavaScriptPacker.php';
 
   $collection = array();
   foreach($files as $path){
