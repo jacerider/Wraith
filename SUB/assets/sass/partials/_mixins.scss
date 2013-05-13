@@ -18,7 +18,17 @@
   float: left;
   margin-left: ($gridColumnWidth * $offset) + ($gridGutterWidth * ($offset - 1)) + ($gridGutterWidth * 2);
   width: ($gridColumnWidth * $columns) + ($gridGutterWidth * ($columns - 1));
-
+  @media (max-width: 767px) {
+    float: none;
+    display: block;
+    width: 100%;
+    margin-left: 0;
+    @include box-sizing(border-box);
+  }
+  @media (min-width: 768px) and (max-width: 979px) {
+    margin-left: ($gridColumnWidth768 * $offset) + ($gridGutterWidth768 * ($offset - 1)) + ($gridGutterWidth768 * 2);
+    width: ($gridColumnWidth768 * $columns) + ($gridGutterWidth768 * ($columns - 1));
+  }
   @media (min-width: 1200px) {
     margin-left: ($gridColumnWidth1200 * $offset) + ($gridGutterWidth1200 * ($offset - 1)) + ($gridGutterWidth1200 * 2);
     width: ($gridColumnWidth1200 * $columns) + ($gridGutterWidth1200 * ($columns - 1));
