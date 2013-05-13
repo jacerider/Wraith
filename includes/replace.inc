@@ -2,6 +2,9 @@
 
 function wraith_js_alter_replace(&$js){
 
+  // Don't use if we have jQuery Update enabled.
+  if(module_exists('jquery_update')) return;
+
   $path = drupal_get_path('theme', 'wraith').'/assets';
 
   // Make sure we inject either the minified or uncompressed version as desired.
