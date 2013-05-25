@@ -6,12 +6,12 @@
 function wraith_bootstrap_preprocess_page(&$vars){
 
   // If we have both sidebars
-  if(!empty($vars['page']['sidebar_first']) && !empty($vars['page']['sidebar_last'])){
+  if(!empty($vars['page']['sidebar_first']) && !empty($vars['page']['sidebar_second'])){
     $vars['sidebar_class'] = 'span3';
     $vars['content_class'] = 'span6';
   }
   // If we only have one sidebar
-  elseif(!empty($vars['page']['sidebar_first']) || !empty($vars['page']['sidebar_last'])){
+  elseif(!empty($vars['page']['sidebar_first']) || !empty($vars['page']['sidebar_second'])){
     $vars['sidebar_class'] = 'span3';
     $vars['content_class'] = 'span9';
   // We we don't have any sidebars
