@@ -6,12 +6,12 @@
 function wraith_bootstrap_preprocess_page(&$vars){
 
   // If we have both sidebars
-  if(!empty($vars['page']['sidebar_first']) && !empty($vars['page']['sidebar_last'])){
+  if(!empty($vars['page']['sidebar_first']) && !empty($vars['page']['sidebar_second'])){
     $vars['sidebar_class'] = 'span3';
     $vars['content_class'] = 'span6';
   }
   // If we only have one sidebar
-  elseif(!empty($vars['page']['sidebar_first']) || !empty($vars['page']['sidebar_last'])){
+  elseif(!empty($vars['page']['sidebar_first']) || !empty($vars['page']['sidebar_second'])){
     $vars['sidebar_class'] = 'span3';
     $vars['content_class'] = 'span9';
   // We we don't have any sidebars
@@ -24,8 +24,8 @@ function wraith_bootstrap_preprocess_page(&$vars){
 /**
  * Returns HTML for status and/or error messages, grouped by type.
  */
-function wraith_status_messages($variables) {
-  $display = $variables['display'];
+function wraith_status_messages($vars) {
+  $display = $vars['display'];
   $output = '';
 
   $status_heading = array(
@@ -127,10 +127,10 @@ function wraith_preprocess_links(&$vars){
   }
 }
 
-function wraith_links__both($variables) {
-  $links = $variables['links'];
-  $attributes = $variables['attributes'];
-  $heading = $variables['heading'];
+function wraith_links__both($vars) {
+  $links = $vars['links'];
+  $attributes = $vars['attributes'];
+  $heading = $vars['heading'];
   global $language_url;
   $output = '';
 
@@ -222,10 +222,10 @@ function wraith_preprocess_views_flipped_table(&$vars) {
   $vars['classes_array'][] = 'table';
 }
 
-function wraith_preprocess_table__field_collection_table(&$variables) {
-  $variables['attributes']['class'][] = 'table';
-  $variables['attributes']['class'][] = 'table-striped';
-  $variables['attributes']['class'][] = 'table-bordered';
+function wraith_preprocess_table__field_collection_table(&$vars) {
+  $vars['attributes']['class'][] = 'table';
+  $vars['attributes']['class'][] = 'table-striped';
+  $vars['attributes']['class'][] = 'table-bordered';
 }
 
 
@@ -233,32 +233,32 @@ function wraith_preprocess_table__field_collection_table(&$variables) {
 /**
  * Returns HTML for primary and secondary local tasks.
  */
-function wraith_menu_local_tasks(&$variables) {
+function wraith_menu_local_tasks(&$vars) {
   $output = '';
 
-  if ( !empty($variables['primary']) ) {
-    $variables['primary']['#prefix'] = '<h2 class="element-invisible">' . t('Primary tabs') . '</h2>';
-    $variables['primary']['#prefix'] = '<ul class="nav nav-tabs">';
-    $variables['primary']['#suffix'] = '</ul>';
-    $output .= drupal_render($variables['primary']);
+  if ( !empty($vars['primary']) ) {
+    $vars['primary']['#prefix'] = '<h2 class="element-invisible">' . t('Primary tabs') . '</h2>';
+    $vars['primary']['#prefix'] = '<ul class="nav nav-tabs">';
+    $vars['primary']['#suffix'] = '</ul>';
+    $output .= drupal_render($vars['primary']);
   }
 
-  if ( !empty($variables['secondary']) ) {
-    $variables['primary']['#prefix'] = '<h2 class="element-invisible">' . t('Primary tabs') . '</h2>';
-    $variables['secondary']['#prefix'] = '<ul class="nav nav-pills">';
-    $variables['secondary']['#suffix'] = '</ul>';
-    $output .= drupal_render($variables['secondary']);
+  if ( !empty($vars['secondary']) ) {
+    $vars['primary']['#prefix'] = '<h2 class="element-invisible">' . t('Primary tabs') . '</h2>';
+    $vars['secondary']['#prefix'] = '<ul class="nav nav-pills">';
+    $vars['secondary']['#suffix'] = '</ul>';
+    $output .= drupal_render($vars['secondary']);
   }
 
   return $output;
 }
 
-function wraith_menu_tree(&$variables) {
-  return '<ul class="menu nav">' . $variables['tree'] . '</ul>';
+function wraith_menu_tree(&$vars) {
+  return '<ul class="menu nav">' . $vars['tree'] . '</ul>';
 }
 
-function wraith_menu_link(array $variables) {
-  $element = $variables['element'];
+function wraith_menu_link(array $vars) {
+  $element = $vars['element'];
   $sub_menu = '';
 
   if ($element['#below']) {
@@ -351,55 +351,29 @@ function wraith_fieldset($vars) {
   $element = $vars['element'];
   element_set_attributes($element, array('id'));
   _form_set_class($element, array('form-wrapper'));
-  if(!empty($element['#collapsible']) && empty($element['#group'])){
-    $collapse = empty($element['#collapsed']) ? 'in' : '';
-    $title = isset($element['#title']) ? $element['#title'] : 'Toggle';
-    $element['#attributes']['class'][] = 'accordion';
-    $element['#id'] = empty($element['#id']) ? '' : $element['#id'];
-    $element['#id'] = $element['#id'] . rand(10000,99999);
-    $output = '<div' . drupal_attributes($element['#attributes']) . '>';
-    $output .= ' <div class="accordion-group">';
-    $output .= ' <div class="accordion-heading">';
-    $output .= ' <a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$element['#id'].'" href="#'.$element['#id'].'-content">'.$title.'</a>';
-    $output .= ' </div>';
-    $output .= ' <div id="'.$element['#id'].'-content" class="accordion-body collapse in">';
-    $output .= ' <div class="accordion-inner">';
-    $output .= $element['#children'];
-    if (isset($element['#value'])) {
-      $output .= $element['#value'];
-    }
-    $output .= ' </div>';
-    $output .= ' </div>';
-    $output .= ' </div>';
-    $output .= '</div>';
-  }else{
-    $output = '<fieldset' . drupal_attributes($element['#attributes']) . '>';
-    if (!empty($element['#title'])) {
-      // Always wrap fieldset legends in a SPAN for CSS positioning.
-      if(empty($element['#collapsible'])){
-        $output .= '<legend><span class="fieldset-legend">' . $element['#title'] . '</span></legend>';
-      }else{
-        $output .= '<legend class="js-hide"><span class="fieldset-legend">' . $element['#title'] . '</span></legend>';
-      }
-    }
-    $output .= '<div class="fieldset-wrapper clearfix">';
-    if (!empty($element['#description'])) {
-      $output .= '<div class="fieldset-description">' . $element['#description'] . '</div>';
-    }
-    //$output .= '<div class="well well-small">';
-    $output .= $element['#children'];
-    if (isset($element['#value'])) {
-      $output .= $element['#value'];
-    }
-    //$output .= '</div>';
-    $output .= '</div>';
-    $output .= "</fieldset>\n";
+
+  $output = '<fieldset' . drupal_attributes($element['#attributes']) . '>';
+  if (!empty($element['#title'])) {
+    // Always wrap fieldset legends in a SPAN for CSS positioning.
+    $output .= '<legend><span class="fieldset-legend">' . $element['#title'] . '</span></legend>';
   }
+  // Add 'row-fluid' class to fieldset wrapper div so that, by adding Bootstrap
+  // span classes to the sub-elements, we can theme forms in a very flexible way:
+  $output .= '<div class="fieldset-wrapper row-fluid">';
+  if (!empty($element['#description'])) {
+    $output .= '<div class="fieldset-description">' . $element['#description'] . '</div>';
+  }
+  $output .= $element['#children'];
+  if (isset($element['#value'])) {
+    $output .= $element['#value'];
+  }
+  $output .= '</div>';
+  $output .= "</fieldset>\n";
   return $output;
 }
 
-function wraith_breadcrumb($variables) {
-  $breadcrumb = $variables['breadcrumb'];
+function wraith_breadcrumb($vars) {
+  $breadcrumb = $vars['breadcrumb'];
 
   if (!empty($breadcrumb)) {
     // Provide a navigational heading to give context for breadcrumb links to
