@@ -529,28 +529,41 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
   /**
    * HTML5 IE support
    */
-  $form['wraith_settings']['wraith_html5'] = array(
+  $form['wraith_settings']['wraith_tools'] = array(
     '#type' => 'fieldset',
-    '#title' => t('HTML5 IE support'),
+    '#title' => t('Tools & Utilities'),
   );
-  $form['wraith_settings']['wraith_html5']['wraith_force_ie'] = array(
+  $form['wraith_settings']['wraith_tools']['wraith_modernizr'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Modernizr'),
+    '#description' => t('<a href="!modernizr">Modernizr</a> is a JavaScript library that detects HTML5 and CSS3 features in the user’s browser. This <strong>includes HTML5 Shiv</strong> so make sure not to enable it in the settings below.', array('!modernizr' => 'http://modernizr.com/')),
+    '#default_value' => theme_get_setting('wraith_modernizr'),
+  );
+  $form['wraith_settings']['wraith_tools']['wraith_ie'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Internet Explorer'),
+    '#description' => t('Settings specific to IE'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+  $form['wraith_settings']['wraith_tools']['wraith_ie']['wraith_force_ie'] = array(
     '#type' => 'checkbox',
     '#title' => t('Force latest IE rendering engine (even in intranet) & Chrome Frame'),
     '#default_value' => theme_get_setting('wraith_force_ie'),
   );
-  $form['wraith_settings']['wraith_html5']['wraith_html5shiv'] = array(
+  $form['wraith_settings']['wraith_tools']['wraith_ie']['wraith_shiv'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable HTML5 elements in IE'),
     '#description' => t('Makes IE understand HTML5 elements via <a href="!shivlink">HTML5 shiv</a>. disable if you use a different method.', array('!shivlink' => 'http://code.google.com/p/html5shiv/')),
-    '#default_value' => theme_get_setting('wraith_html5shiv'),
+    '#default_value' => theme_get_setting('wraith_toolsshiv'),
   );
-  $form['wraith_settings']['wraith_html5']['wraith_ie_comments'] = array(
+  $form['wraith_settings']['wraith_tools']['wraith_ie']['wraith_ie_comments'] = array(
     '#type' => 'checkbox',
     '#title' => t('Add IE specific classes'),
     '#description' => t('This will add conditional classes to the html tag for IE specific styling. see this <a href="!post">post</a> for more info.', array('!post' => 'http://paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/')),
     '#default_value' => theme_get_setting('wraith_ie_comments'),
   );
-  $form['wraith_settings']['wraith_html5']['wraith_prompt_cf'] = array(
+  $form['wraith_settings']['wraith_tools']['wraith_ie']['wraith_prompt_cf'] = array(
     '#type' => 'select',
     '#title' => t('Prompt IE users to install Chrome Frame'),
     '#default_value' => theme_get_setting('wraith_prompt_cf'),
