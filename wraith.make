@@ -3,17 +3,22 @@
 api = 2
 core = 7.x
 
-; Icon API
+; Sonar
 ;
-; integration for icon bundles and icon providers throughout Drupal.
-; @see https://drupal.org/project/icon
-projects[icon][subdir]                          = "contrib"
-projects[icon][version]                         = "1.0-beta2"
+; Compass compiler for Drupal
+; @see https://github.com/JaceRider/Sonar
+projects[sonar][subdir]                       = "contrib"
+projects[sonar][type]                         = "module"
+projects[sonar][download][type]               = "git"
+projects[sonar][download][url]                = "https://github.com/JaceRider/Sonar.git"
+projects[sonar][download][branch]       			= "1.0"
 
-; Fontello
+; Fawesome
 ;
-; This module integrates the amazing Fontello service via the Icon API and
-; allows you combine icon webfonts for your own project.
-; @see https://drupal.org/project/fontello
-projects[fontello][subdir]                       = "contrib"
-projects[fontello][version]                      = "1.0"
+; Add Font Awesome to Drupal.
+; @see https://github.com/JaceRider/Fawesome
+projects[fawesome][subdir]                       = "contrib"
+projects[fawesome][type]                         = "module"
+projects[fawesome][download][type]               = "git"
+projects[fawesome][download][url]                = "https://github.com/JaceRider/Fawesome.git"
+projects[fawesome][download][branch]       			= "1.0"
