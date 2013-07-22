@@ -25,6 +25,11 @@ function wraith_preprocess_html(&$vars) {
     $vars['html'] = '<html ' . $vars['html_attributes'] . ' class="no-js">';
   }
 
+  // Force latest IE rendering engine (even in intranet) & Chrome Frame
+  if (theme_get_setting('wraith_modernizr')) {
+    drupal_add_js(drupal_get_path('theme', 'wraith') . '/assets/scripts/modernizr.js');
+  }
+
   // Enable HTML5 elements in IE
   $vars['html5shiv'] = theme_get_setting('wraith_html5shiv') ? '<!--[if lt IE 9]><script src="'. base_path() . drupal_get_path('theme', 'wraith') .'/assets/scripts/html5shiv.js"></script><![endif]-->' : '';
 
