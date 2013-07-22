@@ -25,7 +25,7 @@ function wraith_preprocess_html(&$vars) {
     $vars['html'] = '<html ' . $vars['html_attributes'] . ' class="no-js">';
   }
 
-  // Force latest IE rendering engine (even in intranet) & Chrome Frame
+  // Add Modernizr.
   if (theme_get_setting('wraith_modernizr')) {
     drupal_add_js(drupal_get_path('theme', 'wraith') . '/assets/scripts/modernizr.js');
   }
