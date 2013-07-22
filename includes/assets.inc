@@ -97,7 +97,6 @@ function wraith_css_alter(&$css) {
   }
 
   foreach ($css as $data => &$item) {
-
     // The CSS_SYSTEM aggregation group doesn't make any sense. Therefore, we are
     // pre-pending it to the CSS_DEFAULT group. This has the same effect as giving
     // it a separate (low-weighted) group but also allows it to be aggregated
@@ -107,58 +106,13 @@ function wraith_css_alter(&$css) {
       $item['weight'] = $item['weight'] - 100;
     }
 
-    // Add the Sass syntax to the item options
+    // Remove any SCSS files at this point as Sonar should have already taken
+    // care of them. If Sonar is not installed this will prevent them from
+    // causing issues.
     $extension = drupal_substr($data, -4);
     if (in_array($extension, array('scss', 'sass'))) {
-      $item['syntax'] = $extension;
+      unset($css[$data]);
     }
-
-    // If it's a sass file and the compiler is off, try finding the compiled css file.
-    if (!theme_get_setting('wraith_sass') && in_array($extension, array('scss', 'sass'))) {
-      global $theme_key;
-      if (empty($item['theme'])) {
-        $item['theme'] = $theme_key;
-      }
-      $files_directory = variable_get('file_' . file_default_scheme() . '_path', conf_path() . '/files') . '/wraith/' . $item['theme'];
-      $path = theme_get_setting('wraith_compiler_destination') ? theme_get_setting('wraith_compiler_destination') . '/' . $item['theme'] : $files_directory;
-      $fileinfo = pathinfo($data);
-      if (file_exists($file = $path . '/stylesheets/' . $fileinfo['filename'] . '.css')) {
-        $data = $item['data'] = $file;
-      }
-      elseif (file_exists($file = drupal_get_path('theme', $item['theme']) . '/stylesheets/' . $fileinfo['filename'] . '.css')) {
-        $data = $item['data'] = $file;
-      }
-    }
-
-    // Include direction-specific stylesheets
-    if ($item['type'] == 'file') {
-      $path_parts = pathinfo($item['data']);
-      if (!empty($path_parts['extension'])) {
-        $extens = ".{$path_parts['extension']}";
-        // If the current language is LTR, add the file with the LTR overrides.
-        if ($language->direction == LANGUAGE_LTR) {
-          $dir_path = str_replace($extens, "-ltr{$extens}", $item['data']);
-        }
-        // If the current language is RTL, add the sass/scss file with the RTL overrides.
-        // Core already takes care of RTL css files.
-        elseif ($language->direction == LANGUAGE_RTL && !empty($item['syntax']) && in_array($item['syntax'], array('scss', 'sass'))) {
-          $dir_path = str_replace($extens, "-rtl{$extens}", $item['data']);
-        }
-        // If the file exists, add the file with the dir (LTR/RTL) overrides.
-        if (isset($dir_path) && file_exists($dir_path) && !isset($css[$dir_path])) {
-          // Replicate the same item, but with the dir (RTL/LTR) path and a little larger
-          // weight so that it appears directly after the original CSS file.
-          $newitem = $item;
-          $newitem['data'] = $dir_path;
-          $newitem['weight'] += 0.0001;
-          $css[$dir_path] = $newitem;
-        }
-      }
-    }
-  }
-
-  if (theme_get_setting('wraith_sass')) {
-    wraith_sass_alter($css);
   }
 }
 
@@ -296,11 +250,6 @@ function wraith_scss_include(){
   foreach(wraith_get_scss_list() as $s){
     drupal_add_css($s, $options);
   }
-
-  // Add Font Awesome
-  if(theme_get_setting('wraith_font_awesome')){
-    drupal_add_css($path.'/font-awesome/font-awesome.scss', $options);
-  }
 }
 
 /**
@@ -337,23 +286,6 @@ function wraith_theme_dynasty() {
   }
 
   return array_reverse($dynasty);
-}
-
-/**
- * Initialize Sass compilation process.
- */
-function wraith_sass_compile() {
-  if (!empty($_GET['recompile']) && $_GET['recompile'] == true && user_access('administer themes')) {
-    cache_clear_all('wraith', 'cache_page', TRUE);
-    drupal_set_message(t('Sass files have been recompiled.'));
-    drupal_goto($_GET['q']);
-  }
-  if (!empty($_GET['recompile-for-prod']) && $_GET['recompile-for-prod'] == true && user_access('administer themes')) {
-    $_SESSION['wraith_compile_for_production'] = TRUE;
-    cache_clear_all('wraith', 'cache_page', TRUE);
-    drupal_set_message(t('Sass files have been recompiled for production.'));
-    drupal_goto($_GET['q']);
-  }
 }
 
 /**

@@ -20,145 +20,28 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
   );
 
   /**
-   * Responsive Layout Settings
+   * SASS/Compass Settings
    */
-  // $form['wraith_settings']['wraith_layout'] = array(
-  //   '#type' => 'fieldset',
-  //   '#title' => t('Responsive Layout Settings'),
-  // );
-  // $form['wraith_settings']['wraith_layout']['wraith_responsive'] = array(
-  //   '#type' => 'checkbox',
-  //   '#title' => t('Enable responsive layout'),
-  //   '#attributes' => array(
-  //     'class' => array('enable-extension'),
-  //   ),
-  //   '#description' => t("Disable if you don't want your site layout to adapt to small devices, this enables both the css3 media-queries that takes care of adapting the layout and the 'viewport' meta tag that makes sure mobile devices properly display your layout."),
-  //   '#default_value' => theme_get_setting('wraith_responsive'),
-  // );
-  // $form['wraith_settings']['wraith_layout']['wraith_responsive_approach'] = array(
-  //   '#type' => 'radios',
-  //   '#title' => t('Desktop or Mobile first'),
-  //   '#options' => array(
-  //       'desktop_first' => t('Desktop first'),
-  //       'mobile_first' => t('Mobile first'),
-  //     ),
-  //   '#description' => t('Select they way your responsive layout should be constructed. desktop-first means we start with desktop size page and reduce accordingly, mobile-first means we start with a very simple layout and build on top of that.'),
-  //   '#default_value' => theme_get_setting('wraith_responsive_approach'),
-  // );
-
-  // $form['wraith_settings']['wraith_layout']['media_break_points'] = array(
-  //   '#markup' => '<strong>' . t('Media queries break-point are being set via <code>!settings</code>. Copy it to your sub-theme and set your own values.', array('!settings' => l('_settings.scss', 'http://drupalcode.org/project/wraith.git/blob/refs/heads/7.x-3.x:/sass/_settings.scss', array('attributes' => array('target'=>'_blank'))))) . '</strong>',
-  // );
-
-  // $form['wraith_settings']['wraith_layout']['responsive_menus'] = array(
-  //   '#type' => 'fieldset',
-  //   '#collapsible' => TRUE,
-  //   '#collapsed' => TRUE,
-  //   '#title' => t('Responsive menus'),
-  // );
-  // $form['wraith_settings']['wraith_layout']['responsive_menus']['wraith_responsive_menus_width'] = array(
-  //   '#type' => 'textfield',
-  //   '#size' => 10,
-  //   '#title' => t('Responsive menus page width'),
-  //   '#description' => t("Set the width in which the selected menus turn into a select menu, or 0 to disable."),
-  //   '#default_value' => theme_get_setting('wraith_responsive_menus_width'),
-  // );
-  // $form['wraith_settings']['wraith_layout']['responsive_menus']['wraith_responsive_menus_selectors'] = array(
-  //   '#type' => 'textfield',
-  //   '#title' => t('Responsive menus selectors'),
-  //   '#description' => t("Enter some CSS selectors for the menus you want to alter."),
-  //   '#default_value' => theme_get_setting('wraith_responsive_menus_selectors'),
-  // );
-  // $form['wraith_settings']['wraith_layout']['responsive_menus']['wraith_responsive_menus_autohide'] = array(
-  //   '#type' => 'checkbox',
-  //   '#title' => t('Auto-hide the standard menu'),
-  //   '#default_value' => theme_get_setting('wraith_responsive_menus_autohide'),
-  // );
-
-  /**
-   * Sass Settings
-   */
-  $form['wraith_settings']['wraith_sass'] = array(
+  $form['wraith_settings']['wraith_compass'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Sass settings'),
+    '#title' => t('Compass Settings'),
   );
-  $form['wraith_settings']['wraith_sass']['wraith_sass'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Compile Sass to CSS'),
-    '#attributes' => array(
-      'class' => array('enable-extension'),
-    ),
-    '#description' => t('Sass integration - uncheck if you are already using a different sass compiler.'),
-    '#element_validate' => array('wraith_sass_validate'),
-    '#default_value' => theme_get_setting('wraith_sass'),
+  $form['wraith_settings']['wraith_compass']['wraith_compass_info'] = array(
+    '#type' => 'markup',
+    '#markup' => t('<h4>This theme now makes use of the Sonar module to handle SCSS/Compass compiling.</h4>'),
   );
-  $form['wraith_settings']['wraith_sass']['wraith_devel'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Development mode - unminified output and FireSass support.'),
-    '#description' => t('Sass Development - Output unminified sass for better readability and add !firesass support. <strong>Note:</strong> css output is way bigger, use only while in development.', array('!firesass' => '<a target="blank" href="https://addons.mozilla.org/en-US/firefox/addon/firesass-for-firebug/">FireSass</a>')),
-    '#default_value' => theme_get_setting('wraith_devel'),
-  );
-  $files_directory = variable_get('file_' . file_default_scheme() . '_path', conf_path() . '/files') . '/wraith';
-  $form['wraith_settings']['wraith_sass']['wraith_compiled_path'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Compiled files path'),
-  );
-  $form['wraith_settings']['wraith_sass']['wraith_compiled_path']['description'] = array(
-    '#markup' => '<div class="description">' . t('Set the path to where you would like compiled files to be stored. defaults to <code>!files</code>', array('!files' => $files_directory)) . '<br />' .
-    t('Compiled files will be stored in a sub-directory with the theme name so entering the path to your themes directory here will place the copiled files in a <code>/stylesheets/</code> directory under each theme\'s directory.') . '</div>',
-  );
-  $form['wraith_settings']['wraith_sass']['wraith_compiled_path']['wraith_compiler_destination'] = array(
-    '#type' => 'textfield',
-    '#attributes' => array(
-      'placeholder' => t('e.g.') . ' sites/all/themes',
-    ),
-    '#default_value' => theme_get_setting('wraith_compiler_destination'),
-  );
-  $form['wraith_settings']['wraith_sass']['wraith_compiled_path']['wraith_url_rewrite'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Rewrite URLs.'),
-    '#description' => t('Anchor all paths in the CSS with its base URL, ignoring external, absolute paths, and compass url helper functions. You may disable this feature depending on the path to your generated CSS.'),
-    '#default_value' => theme_get_setting('wraith_url_rewrite'),
-  );
-
-  $form['wraith_settings']['wraith_sass']['wraith_url_helpers'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Compass URL Helpers'),
-  );
-  $form['wraith_settings']['wraith_sass']['wraith_url_helpers']['description'] = array(
-    '#markup' => '<div class="description">' . t('Here you may set the paths to be used with !helperslink, this allows you to easily restructure your theme or change them to be using asset hosts when moving to production.', array('!helperslink' => '<a target="_blank" href="http://compass-style.org/reference/compass/helpers/urls/">' . t('Compass URL helper functions') . '</a>')) . ' <strong>' . t('if none is set these functions will point to your theme\'s /images, /fonts and /styles directories.') . '</strong></div>',
-  );
-  $form['wraith_settings']['wraith_sass']['wraith_url_helpers']['wraith_images_path'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Path to images directory'),
-    '#description' => t('Set the path to your images, this may be used with the !imageurl helper function. Default path is %default.', array('!imageurl' => '<a target="_blank" href="http://compass-style.org/reference/compass/helpers/urls/#image-url">image-url(..)</a>', '%default' => url(drupal_get_path('theme', arg(3)) . '/assets/images'))),
-    '#attributes' => array(
-      'placeholder' => t('e.g. /path/to/images or http://yourhost.com/path/to/images'),
-    ),
-    '#default_value' => theme_get_setting('wraith_images_path'),
-  );
-  $form['wraith_settings']['wraith_sass']['wraith_url_helpers']['wraith_fonts_path'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Path to fonts directory'),
-    '#description' => t('Set the path to your fonts, this may be used with the !fontsurl helper function. Default path is %default.', array('!fontsurl' => '<a target="_blank" href="http://compass-style.org/reference/compass/helpers/urls/#font-url">font-url(..)</a>', '%default' => url(drupal_get_path('theme', arg(3)) . '/assets/fonts'))),
-    '#attributes' => array(
-      'placeholder' => t('e.g. /path/to/fonts or http://yourhost.com/path/to/fonts'),
-    ),
-    '#default_value' => theme_get_setting('wraith_fonts_path'),
-  );
-
-  $form['wraith_settings']['wraith_sass']['wraith_debbug'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Debugging'),
-  );
-  $form['wraith_settings']['wraith_sass']['wraith_debbug']['description'] = array(
-    '#markup' => '<div class="description">' . t('During theme development, it may be useful, for debugging purposes, to force recompilation of Sass files every page request. You usually won\'t need this on day-to-day development, your sass files are already being recompiled everytime they are updated and every time you clear your cache.') . '<br><strong>' . t('<strong>Note:</strong> This comes with a performance hit and should be turned off on production websites.') . '</strong></div>',
-  );
-  $form['wraith_settings']['wraith_sass']['wraith_debbug']['wraith_sass_recompile'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Recompile all style sheets on every page request.'),
-    '#default_value' => theme_get_setting('wraith_sass_recompile'),
-  );
+  if(module_exists('sonar'))
+  {
+    $form['wraith_settings']['wraith_compass']['wraith_compass_status'] = array(
+      '#type' => 'markup',
+      '#markup' => '<div class="messages status">'.t('The Sonar module is enabled. You can access its settings !url.', array('!url' => l('here', 'admin/config/system/sonar'))).'</div>',
+    );
+  }else{
+    $form['wraith_settings']['wraith_compass']['wraith_compass_status'] = array(
+      '#type' => 'markup',
+      '#markup' => '<div class="messages error">'.t('Please download the Sonar module (!url) and enable it to utilize SCSS in this theme.', array('!url' => l('https://github.com/JaceRider/Sonar', 'https://github.com/JaceRider/Sonar'))).'</div>',
+    );
+  }
 
   /**
    * Bootstrap settings
@@ -221,15 +104,6 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
   $form['wraith_settings']['wraith_font'] = array(
     '#type' => 'fieldset',
     '#title' => t('Font settings'),
-  );
-  $form['wraith_settings']['wraith_font']['wraith_font_awesome'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Use Font Awesome'),
-    '#attributes' => array(
-      'class' => array('enable-extension'),
-    ),
-    '#description' => t('Use Font Awesome fonts').' | '.l('http://fortawesome.github.io/Font-Awesome/','http://fortawesome.github.io/Font-Awesome/'),
-    '#default_value' => theme_get_setting('wraith_font_awesome'),
   );
 
   /**
@@ -676,29 +550,9 @@ function wraith_form_system_theme_settings_alter_validate($form, &$form_state){
   $values = _array_remove_null($values);
 
   // If using Font Awesome -- deselect Bootstrap sprites
-  if(!empty($values['wraith_font_awesome']) && !empty($values['wraith_bootstrap_scss']['_sprites'])){
+  if(module_exists('fawesome') && !empty($values['wraith_bootstrap_scss']['_sprites'])){
     unset($values['wraith_bootstrap_scss']['_sprites']);
     drupal_set_message('Bootstrap sprites have been disabled to make way for Font Awesome to be awesome.', 'warning');
-  }
-}
-
-/**
- * Flush all CSS and page caches so Sass files are recompiled.
- *
- * @see _admin_menu_flush_cache()
- */
-function wraith_sass_validate($element, &$form_state) {
-  if ($element['#value']) {
-    // Change query-strings on css/js files to enforce reload for all users.
-    _drupal_flush_css_js();
-
-    drupal_clear_css_cache();
-    drupal_clear_js_cache();
-
-    // Clear the page cache, since cached HTML pages might link to old CSS and
-    // JS aggregates.
-    cache_clear_all('*', 'cache_page', TRUE);
-    drupal_set_message(t('Your Sass files will be recompiled'), 'status');
   }
 }
 
