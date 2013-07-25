@@ -32,17 +32,6 @@ function wraith_js_alter(&$js) {
     $js = array_diff_key($js, $disable_files);
   }
 
-  // Move all scripts to the footer.
-  // To force a file to go in the header do -
-  // drupal_add_js('path/to/js', array('force_header' => TRUE));
-  if (theme_get_setting('wraith_js_footer')) {
-    foreach ($js as &$item) {
-      if (empty($item['force_header'])) {
-        $item['scope'] = 'footer';
-      }
-    }
-  }
-
   if (theme_get_setting('wraith_coffee')) {
     require_once drupal_get_path('theme', 'wraith') . '/includes/coffee.inc';
     wraith_aggregate_coffee($js);
