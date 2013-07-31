@@ -157,6 +157,7 @@ function wraith_links__both($vars) {
     }
 
     $attributes['class'][] = 'nav';
+    $attributes['class'][] = 'nav-pills';
     $output .= '<ul ' . drupal_attributes($attributes) . '>';
 
     $num_links = count($links);

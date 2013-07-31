@@ -115,29 +115,27 @@ function wraith_get_bootstrap_scss($options = FALSE) {
     '_variables',
     '_mixins',
     // CSS Reset
-    '_reset',
-    // Grid system and page structure
+    '_normalize',
+    '_print',
+    // Core CSS
     '_scaffolding',
-    '_grid',
-    '_layouts',
-    // Base CSS
     '_type',
     '_code',
-    '_forms',
+    '_grid',
     '_tables',
-    // Components: common
-    '_sprites',
-    '_dropdowns',
-    '_wells',
-    '_component-animations',
-    '_close',
-    // Components: Buttons & Alerts
+    '_forms',
     '_buttons',
-    '_button-groups',
-    '_alerts', // Note: alerts share common CSS with buttons and thus have styles in _buttons.scss
+    // Components: common
+    '_component-animations',
+    '_dropdowns',
+    '_list-group',
+    '_panels',
+    '_wells',
+    '_close',
     // Components: Nav
     '_navs',
     '_navbar',
+    '_button-groups',
     '_breadcrumbs',
     '_pagination',
     '_pager',
@@ -146,17 +144,18 @@ function wraith_get_bootstrap_scss($options = FALSE) {
     '_tooltip',
     '_popovers',
     // Components: Misc
+    '_alerts',
     '_thumbnails',
-    '_labels-badges',
+    '_media',
+    '_labels',
+    '_badges',
     '_progress-bars',
     '_accordion',
     '_carousel',
-    '_hero-unit',
+    '_jumbotron',
     // Utility classes
-    '_utilities', // Has to be last to override when necessary
-    '_responsive-1200px-min',
-    '_responsive-767px-max',
-    '_responsive-768px-979px',
+    '_utilities',
+    '_responsive-utilities',
   );
   foreach($files as $s){
     $label = ucwords(str_replace('_', '', str_replace('-', ' ', $s)));
@@ -171,19 +170,18 @@ function wraith_get_bootstrap_scss($options = FALSE) {
 function wraith_get_bootstrap_js($options = FALSE) {
   $return = array();
   $files = array(
-    'bootstrap-transition',
-    'bootstrap-affix',
-    'bootstrap-alert',
-    'bootstrap-button',
-    'bootstrap-carousel',
-    'bootstrap-collapse',
-    'bootstrap-dropdown',
-    'bootstrap-modal',
-    'bootstrap-scrollspy',
-    'bootstrap-tab',
-    'bootstrap-tooltip',
-    'bootstrap-popover',
-    'bootstrap-typeahead'
+    'transition',
+    'affix',
+    'alert',
+    'button',
+    'carousel',
+    'collapse',
+    'dropdown',
+    'modal',
+    'scrollspy',
+    'tab',
+    'tooltip',
+    'popover'
   );
   foreach($files as $s){
     $label = ucwords(str_replace('_', '', str_replace('-', ' ', $s)));
@@ -198,7 +196,7 @@ function wraith_get_bootstrap_js($options = FALSE) {
 function wraith_bootstrap_include(){
   global $theme_key;
   $scss = theme_get_setting('wraith_bootstrap_scss');
-  $path = drupal_get_path('theme', 'wraith').'/assets/bootstrap/stylesheets/bootstrap';
+  $path = drupal_get_path('theme', 'wraith').'/assets/bootstrap/stylesheets';
   $override = drupal_get_path('theme', $theme_key).'/assets/sass/override';
   $options = array(
     'every_page' => TRUE,
