@@ -1,5 +1,10 @@
 # Wraith
 
+## Version 2.0
+
+Version 2.0 is a stripped down version of 1.0. SASS and Font Awesome
+functionality has been offloaded to submodules.
+
 
 ## Base theme for Drupal that offers the following features:
 
@@ -11,7 +16,7 @@
 
 ## Usage
 
-Wraith is meant to be a stable base to build sub-themes on top of, so I highly suggest you generate a sub-theme 
+Wraith is meant to be a stable base to build sub-themes on top of, so I highly suggest you generate a sub-theme
 of Wraith with the following `drush` command and follow the prompts where necessary.
 
 ```shell
