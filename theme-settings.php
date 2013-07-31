@@ -290,6 +290,17 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#default_value' => theme_get_setting('jquery_update_jquery_cdn') ? theme_get_setting('jquery_update_jquery_cdn') : 'none',
     '#description' => t('Use jQuery and jQuery UI from a CDN. If the CDN is not available the local version of jQuery and jQuery UI will be used.'),
   );
+  $form['wraith_settings']['wraith_js']['wraith_js_footer_wrapper'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Move JavaScript to footer'),
+  );
+  $form['wraith_settings']['wraith_js']['wraith_js_footer_wrapper']['wraith_js_footer'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Move all scripts to the footer.'),
+    '#description' => t('Yahoo! Exceptional Performance team recommends <a href="http://developer.yahoo.com/performance/rules.html#js_bottom">placing scripts at the bottom of your page</a> because of the way browsers download components.') . '<br>' .
+      t('This will move all your scripts to the bottom of your page. You can still force a script to go in the <code>head</code> by setting <code>"force_header" => TRUE</code> in your !drupal_add_js options array.', array('!drupal_add_js' => l('drupal_add_js', 'http://api.drupal.org/api/drupal/includes%21common.inc/function/drupal_add_js', array('attributes' => array('target'=>'_blank'))))),
+    '#default_value' => theme_get_setting('wraith_js_footer'),
+  );
   // Aggregate JS
   $form['wraith_settings']['wraith_js']['wraith_aggregatejs'] = array(
     '#type' => 'fieldset',
