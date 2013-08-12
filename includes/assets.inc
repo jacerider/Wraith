@@ -59,6 +59,9 @@ function wraith_css_alter(&$css) {
     $enable_files = wraith_get_assets_list('css');
     // remove selected css files
     if ($modules = theme_get_setting('wraith_enable_css_modules')) {
+      global $theme_key;
+      // Let all styles from the current theme through
+      $modules += array($theme_key=>$theme_key);
       $enable_files = wraith_get_assets_list('css', NULL, $modules);
     }
     if (is_array(theme_get_setting('wraith_enable_css_files')) && $files = array_filter(theme_get_setting('wraith_enable_css_files'))) {
