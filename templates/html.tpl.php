@@ -43,8 +43,10 @@
 
   <?php print $styles; ?>
 
-  <?php // Eenable HTML5 elements in IE ?>
+  <?php // Enable HTML5 elements in IE ?>
+  <?php print $modernizr; ?>
   <?php print $html5shiv; ?>
+  <?php print $respond; ?>
 
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>

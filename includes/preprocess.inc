@@ -26,12 +26,13 @@ function wraith_preprocess_html(&$vars) {
   }
 
   // Add Modernizr.
-  if (theme_get_setting('wraith_modernizr')) {
-    drupal_add_js(drupal_get_path('theme', 'wraith') . '/assets/scripts/modernizr.js');
-  }
+  $vars['modernizr'] = theme_get_setting('wraith_modernizr') ? '<!--[if lt IE 9]><script src="'. base_path() . drupal_get_path('theme', 'wraith') . '/assets/scripts/modernizr.js"></script><![endif]-->' : '';
 
   // Enable HTML5 elements in IE
-  $vars['html5shiv'] = theme_get_setting('wraith_html5shiv') ? '<!--[if lt IE 9]><script src="'. base_path() . drupal_get_path('theme', 'wraith') .'/assets/scripts/html5shiv.js"></script><![endif]-->' : '';
+  $vars['html5shiv'] = theme_get_setting('wraith_html5shiv') && !theme_get_setting('wraith_modernizr') ? '<!--[if lt IE 9]><script src="'. base_path() . drupal_get_path('theme', 'wraith') .'/assets/scripts/html5shiv.js"></script><![endif]-->' : '';
+
+  // Add Modernizr.
+  $vars['respond'] = theme_get_setting('wraith_respondjs') ? '<!--[if lt IE 9]><script src="'. base_path() . drupal_get_path('theme', 'wraith') . '/assets/scripts/respond.min.js"></script><![endif]-->' : '';
 
   // Force latest IE rendering engine (even in intranet) & Chrome Frame
   if (theme_get_setting('wraith_force_ie')) {

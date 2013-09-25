@@ -402,6 +402,12 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#description' => t('<a href="!modernizr">Modernizr</a> is a JavaScript library that detects HTML5 and CSS3 features in the user’s browser. This <strong>includes HTML5 Shiv</strong> so make sure not to enable it in the settings below.', array('!modernizr' => 'http://modernizr.com/')),
     '#default_value' => theme_get_setting('wraith_modernizr'),
   );
+  $form['wraith_settings']['wraith_tools']['wraith_respondjs'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Respond'),
+    '#description' => t('<a href="!respond">Respond.js</a> is a fast & lightweight polyfill for min/max-width CSS3 Media Queries (for IE 6-8, and more).', array('!modernizr' => 'https://github.com/scottjehl/Respond')),
+    '#default_value' => theme_get_setting('wraith_respondjs'),
+  );
   $form['wraith_settings']['wraith_tools']['wraith_ie'] = array(
     '#type' => 'fieldset',
     '#title' => t('Internet Explorer'),
