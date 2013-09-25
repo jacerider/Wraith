@@ -20,30 +20,6 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
   );
 
   /**
-   * SASS/Compass Settings
-   */
-  $form['wraith_settings']['wraith_compass'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Compass Settings'),
-  );
-  $form['wraith_settings']['wraith_compass']['wraith_compass_info'] = array(
-    '#type' => 'markup',
-    '#markup' => t('<h4>This theme now makes use of the Sonar module to handle SCSS/Compass compiling.</h4>'),
-  );
-  if(module_exists('sonar'))
-  {
-    $form['wraith_settings']['wraith_compass']['wraith_compass_status'] = array(
-      '#type' => 'markup',
-      '#markup' => '<div class="messages status">'.t('The Sonar module is enabled. You can access its settings !url.', array('!url' => l('here', 'admin/config/system/sonar'))).'</div>',
-    );
-  }else{
-    $form['wraith_settings']['wraith_compass']['wraith_compass_status'] = array(
-      '#type' => 'markup',
-      '#markup' => '<div class="messages error">'.t('Please download the Sonar module (!url) and enable it to utilize SCSS in this theme.', array('!url' => l('https://github.com/JaceRider/Sonar', 'https://github.com/JaceRider/Sonar'))).'</div>',
-    );
-  }
-
-  /**
    * Bootstrap settings
    */
   $form['wraith_settings']['wraith_bootstrap'] = array(
@@ -96,14 +72,6 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#description' => t('Theme overrides that make Drupal more Bootstrappy.'),
     '#default_value' => theme_get_setting('wraith_bootstrap_overrides'),
     '#prefix' => '<br />',
-  );
-
-  /**
-   * Bootstrap settings
-   */
-  $form['wraith_settings']['wraith_font'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Font settings'),
   );
 
   /**
@@ -485,6 +453,54 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#description' => t('<strong>Experimental</strong> - this will instantly update your browser when a watched file is updated without refreshing the browser. note: this will work with stylesheets only (CSS/SASS/SCSS).'),
     '#default_value' => theme_get_setting('wraith_instant_watcher'),
   );
+
+  /**
+   * SASS/Compass Settings
+   */
+  $form['wraith_settings']['wraith_compass'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Compass Settings'),
+  );
+  $form['wraith_settings']['wraith_compass']['wraith_compass_info'] = array(
+    '#type' => 'markup',
+    '#markup' => t('<h4>This theme now makes use of the Sonar module to handle SCSS/Compass compiling.</h4>'),
+  );
+  if(module_exists('sonar'))
+  {
+    $form['wraith_settings']['wraith_compass']['wraith_compass_status'] = array(
+      '#type' => 'markup',
+      '#markup' => '<div class="messages status">'.t('The Sonar module is enabled. You can access its settings !url.', array('!url' => l('here', 'admin/config/system/sonar'))).'</div>',
+    );
+  }else{
+    $form['wraith_settings']['wraith_compass']['wraith_compass_status'] = array(
+      '#type' => 'markup',
+      '#markup' => '<div class="messages error">'.t('Please download the Sonar module (!url) and enable it to utilize SCSS in this theme.', array('!url' => l('https://github.com/JaceRider/Sonar', 'https://github.com/JaceRider/Sonar'))).'</div>',
+    );
+  }
+
+  /**
+   * Font settings
+   */
+  $form['wraith_settings']['wraith_font'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Font settings'),
+  );
+  $form['wraith_settings']['wraith_font']['wraith_font_info'] = array(
+    '#type' => 'markup',
+    '#markup' => t('<h4>This theme now makes use of the Fawesome module to handle Font Awesome.</h4>'),
+  );
+  if(module_exists('fawesome'))
+  {
+    $form['wraith_settings']['wraith_font']['wraith_font_status'] = array(
+      '#type' => 'markup',
+      '#markup' => '<div class="messages status">'.t('The Fawesome module is enabled. You have Font Awesome magic automatically.').'</div>',
+    );
+  }else{
+    $form['wraith_settings']['wraith_font']['wraith_font_status'] = array(
+      '#type' => 'markup',
+      '#markup' => '<div class="messages error">'.t('Please download the Fawesome module (!url) and enable it to utilize Font Awesome in this theme.', array('!url' => l('https://github.com/JaceRider/fawesome', 'https://github.com/JaceRider/fawesome'))).'</div>',
+    );
+  }
 
   /**
    * General Settings
