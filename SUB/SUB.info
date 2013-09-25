@@ -22,6 +22,16 @@ base theme = wraith
 
 styles[assets/sass/SUB.scss][options][media] = all
 
+; Libraries
+styles[assets/sass/partials/libraries/_variables.scss][options][media]    = all
+styles[assets/sass/partials/libraries/_mixins.scss][options][media]       = all
+
+; Components
+styles[assets/sass/partials/components/_typography.scss][options][media]  = all
+
+; Sections
+styles[assets/sass/partials/sections/_front.scss][options][media]         = all
+
 
 ; Theme Script Files ------------------------------------------------------
 
