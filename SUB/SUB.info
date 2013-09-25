@@ -30,6 +30,7 @@ styles[assets/sass/partials/libraries/_mixins.scss][options][media]       = all
 styles[assets/sass/partials/components/_typography.scss][options][media]  = all
 
 ; Sections
+styles[assets/sass/partials/sections/_global.scss][options][media]        = all
 styles[assets/sass/partials/sections/_front.scss][options][media]         = all
 
 
