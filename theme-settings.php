@@ -258,41 +258,6 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#default_value' => theme_get_setting('jquery_update_jquery_cdn') ? theme_get_setting('jquery_update_jquery_cdn') : 'none',
     '#description' => t('Use jQuery and jQuery UI from a CDN. If the CDN is not available the local version of jQuery and jQuery UI will be used.'),
   );
-  // Aggregate JS
-  $form['wraith_settings']['wraith_js']['wraith_aggregatejs'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Aggregate JS files'),
-  );
-  $form['wraith_settings']['wraith_js']['wraith_aggregatejs']['wraith_aggregate_js'] = array(
-    '#type' => 'checkbox',
-    '#title' => t("Enable this extension."),
-    '#description' => t('Select files that will be agreegate into a global file.'),
-    '#default_value' => theme_get_setting('wraith_aggregate_js'),
-  );
-  $form['wraith_settings']['wraith_js']['wraith_aggregatejs']['files'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Specific JS files'),
-    '#description' => t('Aggregate specific JS files from core and contrib modules.') . $select_toggle,
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-
-  $js = wraith_get_assets_list('js');
-  $saved = theme_get_setting('wraith_aggregate_js_files');
-  $saved = empty($saved) ? array() : $saved;
-  $new = array();
-  foreach($saved as $key => $value){
-    if($value) $new[$key] = $value;
-  }
-  $saved = array_merge($new,$saved);
-  $options = array_merge($saved,$js);
-  $form['wraith_settings']['wraith_js']['wraith_aggregatejs']['files']['wraith_aggregate_js_files'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Aggregate specific JS files.'),
-    '#options' => $options,
-    '#default_value' => theme_get_setting('wraith_aggregate_js_files') ? theme_get_setting('wraith_aggregate_js_files') : array(),
-    '#after_build' => array('wraith_aggregate_js_files_after'),
-  );
   // Disable JS
   $form['wraith_settings']['wraith_js']['wraith_disablejs'] = array(
     '#type' => 'fieldset',
