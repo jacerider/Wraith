@@ -42,7 +42,8 @@ function wraith_preprocess_html(&$vars) {
       '#attributes' => array(
         'http-equiv' => 'X-UA-Compatible',
         'content' =>  'IE=edge,chrome=1',
-      )
+      ),
+      '#weight' => '-99999'
     );
     drupal_add_html_head($meta_force_ie, 'meta_force_ie');
   }
