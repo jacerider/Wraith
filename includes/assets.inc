@@ -12,26 +12,6 @@ function wraith_js_alter(&$js) {
   require_once drupal_get_path('theme', 'wraith') . '/includes/replace.inc';
   wraith_js_alter_replace($js);
 
-  // Disable core and modules JS via theme settings
-  if (theme_get_setting('wraith_disable_js')) {
-    $disable_files = array();
-    // remove selected JS files
-    if ($modules = theme_get_setting('wraith_disable_js_modules')) {
-      //$disable_files = array_merge($disable_files, wraith_get_assets_list('js', $modules));
-    }
-    if (is_array(theme_get_setting('wraith_disable_js_files')) && $files = array_filter(theme_get_setting('wraith_disable_js_files'))) {
-      $disable_files = array_merge($disable_files, $files);
-    }
-    if (is_array(theme_get_setting('wraith_disable_jquery_files')) && $files = array_filter(theme_get_setting('wraith_disable_jquery_files'))) {
-      $disable_files = array_merge($disable_files, $files);
-    }
-    if (theme_get_setting('wraith_disable_wraith_js') && $files = wraith_get_assets_list('js', 'wraith')) {
-      // remove all JS files added by wraith
-      $disable_files = array_merge($disable_files, $files);
-    }
-    $js = array_diff_key($js, $disable_files);
-  }
-
   if (theme_get_setting('wraith_coffee')) {
     require_once drupal_get_path('theme', 'wraith') . '/includes/coffee.inc';
     wraith_aggregate_coffee($js);

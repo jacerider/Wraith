@@ -258,69 +258,6 @@ function wraith_form_system_theme_settings_alter(&$form, &$form_state) {
     '#default_value' => theme_get_setting('jquery_update_jquery_cdn') ? theme_get_setting('jquery_update_jquery_cdn') : 'none',
     '#description' => t('Use jQuery and jQuery UI from a CDN. If the CDN is not available the local version of jQuery and jQuery UI will be used.'),
   );
-  // Disable JS
-  $form['wraith_settings']['wraith_js']['wraith_disablejs'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Disable JS files'),
-  );
-  $form['wraith_settings']['wraith_js']['wraith_disablejs']['wraith_disable_js'] = array(
-    '#type' => 'checkbox',
-    '#title' => t("Enable this extension."),
-    '#attributes' => array(
-      'class' => array('enable-extension'),
-    ),
-    '#description' => t('Disable all JS files included by core and contrib modules or choose specific JS files to disable.'),
-    '#default_value' => theme_get_setting('wraith_disable_js'),
-  );
-  $form['wraith_settings']['wraith_js']['wraith_disablejs']['modules'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Per module'),
-    '#description' => t('Disable all JS files from selected modules.') . $select_toggle,
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-  $form['wraith_settings']['wraith_js']['wraith_disablejs']['modules']['wraith_disable_js_modules'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Modules'),
-    '#options' => wraith_get_modules_list(),
-    '#default_value' => theme_get_setting('wraith_disable_js_modules') ? theme_get_setting('wraith_disable_js_modules') : array(),
-  );
-  $form['wraith_settings']['wraith_js']['wraith_disablejs']['files'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Specific JS files'),
-    '#description' => t('Disable specific JS files from core and contrib modules.') . $select_toggle,
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-  $form['wraith_settings']['wraith_js']['wraith_disablejs']['files']['wraith_disable_js_files'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Disable specific JS files.'),
-    '#options' => wraith_get_assets_list('js'),
-    '#default_value' => theme_get_setting('wraith_disable_js_files') ? theme_get_setting('wraith_disable_js_files') : array(),
-  );
-  $form['wraith_settings']['wraith_js']['wraith_disablejs']['jquery'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Core jQuery & jQuery UI'),
-    '#description' => t('Disable specific jQuery & jQuery UI files from core.') . $select_toggle,
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-  $form['wraith_settings']['wraith_js']['wraith_disablejs']['jquery']['wraith_disable_jquery_files'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Disable core jQuery & jQuery UI files.'),
-    '#options' => wraith_get_assets_list('js', 'jquery'),
-    '#default_value' => theme_get_setting('wraith_disable_jquery_files') ? theme_get_setting('wraith_disable_jquery_files') : array(),
-  );
-  $form['wraith_settings']['wraith_js']['wraith_disablejs']['wraith_js'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('wraith\'s JS'),
-  );
-  $form['wraith_settings']['wraith_js']['wraith_disablejs']['wraith_js']['wraith_disable_wraith_js'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Disable all JS from Wraith.'),
-    '#description' => t('<strong>Note:</strong> this will break wraith\'s scripts like the file-watcher and mobile menus if they are enabled, be warned.'),
-    '#default_value' => theme_get_setting('wraith_disable_wraith_js'),
-  );
 
   /**
    * HTML5 IE support
