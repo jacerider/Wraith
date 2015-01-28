@@ -11,7 +11,7 @@ projects[sonar][subdir]                       = "contrib"
 projects[sonar][type]                         = "module"
 projects[sonar][download][type]               = "git"
 projects[sonar][download][url]                = "https://github.com/JaceRider/Sonar.git"
-projects[sonar][download][branch]       			= "1.0"
+projects[sonar][download][branch]             = "2.0"
 
 ; Fawesome
 ;
@@ -21,4 +21,4 @@ projects[fawesome][subdir]                       = "contrib"
 projects[fawesome][type]                         = "module"
 projects[fawesome][download][type]               = "git"
 projects[fawesome][download][url]                = "https://github.com/JaceRider/Fawesome.git"
-projects[fawesome][download][branch]       			= "1.0"
+projects[fawesome][download][branch]             = "1.0"
